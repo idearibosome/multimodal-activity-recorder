@@ -9,9 +9,9 @@
 
 #define IRQM_CONFIGURATOR_QML_REGISTER_SINGLETON(className) \
     qmlRegisterSingletonType<IRQM##className>( \
-        (QString("IRQM.") + #className).toUtf8().constData(), \
+        "IRQtModules", \
         1, 0, \
-        (QString("IRQM") + #className).toUtf8().constData(), \
+        #className, \
         singletonForIRQM##className);
 
 #include "irqmjsonhelper.h"
