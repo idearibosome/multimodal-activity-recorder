@@ -45,14 +45,14 @@ include(MultiModalRecorderShared.pri)
 # defines, headers, sources, and resources
 DEFINES += MMRECORDER_SERVER
 
+RESOURCES += \
+    $$PWD/qml/qml_server.qrc
+
 HEADERS += \
-    sources/server/main.h
+    $$PWD/sources/server/main.h
 
 SOURCES += \
-    sources/server/main.cpp
-
-RESOURCES += \
-    qml/qml_server.qrc
+    $$PWD/sources/server/main.cpp
 
 QML_IMPORT_PATH =
 

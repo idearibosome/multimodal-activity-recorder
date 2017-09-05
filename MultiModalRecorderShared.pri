@@ -1,2 +1,18 @@
 RESOURCES += \
-    qml/qml_shared.qrc
+    $$PWD/qml/qml_shared.qrc
+
+HEADERS += \
+    $$PWD/sources/shared/irqm/irqmfilehelper.h \
+    $$PWD/sources/shared/irqm/irqmjsonhelper.h \
+    $$PWD/sources/shared/irqm/irqmpathhelper.h \
+    $$PWD/sources/shared/irqm/irqmrandomhelper.h \
+    $$PWD/sources/shared/irqm/irqmsignalhandler.h \
+    $$PWD/sources/shared/irqm/irqmconfigurator.h
+
+SOURCES += \
+    $$PWD/sources/shared/irqm/irqmfilehelper.cpp \
+    $$PWD/sources/shared/irqm/irqmjsonhelper.cpp \
+    $$PWD/sources/shared/irqm/irqmpathhelper.cpp \
+    $$PWD/sources/shared/irqm/irqmrandomhelper.cpp \
+    $$PWD/sources/shared/irqm/irqmsignalhandler.cpp \
+    $$PWD/sources/shared/irqm/irqmconfigurator.cpp
