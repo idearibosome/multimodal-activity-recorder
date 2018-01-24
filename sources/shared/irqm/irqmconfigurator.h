@@ -1,6 +1,7 @@
 #ifndef IRQMCONFIGURATOR_H
 #define IRQMCONFIGURATOR_H
 
+#include <QApplication>
 #include <QGuiApplication>
 #include <QObject>
 #include <QQmlApplicationEngine>
@@ -17,6 +18,8 @@ public:
 
     static void registerModules(QQmlApplicationEngine *engine);
     static void registerProperties(QQmlApplicationEngine *engine);
+
+    static void configureRecommendedSettings();
 
 signals:
 

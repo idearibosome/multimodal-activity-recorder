@@ -1,6 +1,6 @@
 #include "main.h"
 
-#include "mmrserver.h"
+#include "quickmain.h"
 
 #include "../shared/irqm/irqmconfigurator.h"
 //---------------------------------------------------------------------------
@@ -18,13 +18,13 @@ int main(int argc, char *argv[]) {
     IRQMConfigurator::registerAllParams(&engine);
 
 
-    // server
-    MMRServer *server = new MMRServer();
-    engine.rootContext()->setContextProperty("mServer", server);
+    // objects > quick main
+    qMain = new QuickMain();
+    engine.rootContext()->setContextProperty("qMain", qMain);
 
 
     // load main
-    engine.load(QUrl(QStringLiteral("qrc:/qml/server/main.qml")));
+    engine.load(QUrl(QStringLiteral("qrc:/qml/client/main.qml")));
     if (engine.rootObjects().isEmpty()) {
         return -1;
     }

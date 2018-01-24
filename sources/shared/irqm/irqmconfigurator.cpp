@@ -49,14 +49,15 @@ void IRQMConfigurator::registerModules(QQmlApplicationEngine *engine) {
 }
 //------------------------------------------------------------------------------
 void IRQMConfigurator::registerProperties(QQmlApplicationEngine *engine) {
-    // Scaling ratio
-    qreal scale;
-#if defined(Q_OS_WIN)
-    scale = qApp->primaryScreen()->logicalDotsPerInch() / 96;
-#else
-    scale = qApp->primaryScreen()->logicalDotsPerInch() / 72;
+    Q_UNUSED(engine);
+}
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+void IRQMConfigurator::configureRecommendedSettings() {
+    // Enable automatic high DPI scaling
+#if defined(Q_OS_WIN) || defined(Q_OS_OSX)
+    QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 #endif
-    engine->rootContext()->setContextProperty("IRQMScale", scale);
 }
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------

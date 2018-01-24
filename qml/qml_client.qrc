@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/qml">
+        <file>client/main.qml</file>
+        <file>client/ModalityPage.qml</file>
+        <file>client/ModalityKinectPage.qml</file>
+        <file>client/ModalityQtSensorPage.qml</file>
+    </qresource>
+</RCC>

@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/qml">
         <file>components/Dummy.qml</file>
+        <file>components/Flickable.qml</file>
     </qresource>
 </RCC>

@@ -18,7 +18,7 @@ CONFIG += resources_big
 
 DEFINES += QT_DEPRECATED_WARNINGS
 
-TARGET = MMRecorderServer
+TARGET = MMRecorderClient
 
 win32 {
   VERSION = 0.1.0
@@ -43,20 +43,20 @@ include(MultiModalRecorderShared.pri)
 
 
 # defines, headers, sources, and resources
-DEFINES += MMRECORDER_SERVER
+DEFINES += MMRECORDER_CLIENT
 
 RESOURCES += \
-    $$PWD/qml/qml_server.qrc
+    $$PWD/qml/qml_client.qrc
 
 HEADERS += \
-    $$PWD/sources/server/main.h \
-    $$PWD/sources/server/mmrserver.h \
-    sources/server/mmrconnection.h
+    $$PWD/sources/client/main.h \
+    $$PWD/sources/client/mmrclient.h \
+    $$PWD/sources/client/quickmain.h
 
 SOURCES += \
-    $$PWD/sources/server/main.cpp \
-    $$PWD/sources/server/mmrserver.cpp \
-    sources/server/mmrconnection.cpp
+    $$PWD/sources/client/main.cpp \
+    $$PWD/sources/client/mmrclient.cpp \
+    $$PWD/sources/client/quickmain.cpp
 
 QML_IMPORT_PATH =
 
@@ -70,6 +70,12 @@ win32 {
 } else:android {
 } else:ios {
 }
+
+
+# modalities
+MMRModalities += kinect
+MMRModalities += qtsensor
+include(modalities.pri)
 
 
 # default rules for deployment.
