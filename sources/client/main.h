@@ -4,5 +4,6 @@
 #include <QtWidgets/QApplication>
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
+#include <QQuickWindow>
 
 #endif // MAIN_H
