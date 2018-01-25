@@ -68,6 +68,7 @@ win32 {
 } else:macx {
     #OBJECTIVE_SOURCES +=
 } else:android {
+    ANDROID_PACKAGE_SOURCE_DIR = $$PWD/sources/client/android
 } else:ios {
 }
 

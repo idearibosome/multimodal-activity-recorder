@@ -1,6 +1,7 @@
 #ifndef MODALITY_H
 #define MODALITY_H
 
+#include <QDateTime>
 #include <QDebug>
 #include <QObject>
 #include <QRegularExpression>
@@ -17,11 +18,17 @@ public:
     QString identifier;
     QVariantMap configuration;
 
+    qint64 startAcquisitionTimestamp;
+
     virtual bool initialize(QVariantMap configuration);
     virtual void reset();
 
     virtual bool startAcquisition() = 0;
     virtual void stopAcquisition() = 0;
+
+protected:
+    void startRecordingAcquisitionTimestamp();
+    qint64 getAcquisitionTimestamp();
 
 signals:
     void acquired(QByteArray data);

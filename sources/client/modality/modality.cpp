@@ -18,3 +18,13 @@ void Modality::reset() {
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
+void Modality::startRecordingAcquisitionTimestamp() {
+    this->startAcquisitionTimestamp = QDateTime::currentMSecsSinceEpoch();
+}
+//---------------------------------------------------------------------------
+qint64 Modality::getAcquisitionTimestamp() {
+    qint64 currentTimestamp = QDateTime::currentMSecsSinceEpoch();
+    return currentTimestamp - this->startAcquisitionTimestamp;
+}
+//---------------------------------------------------------------------------
+//---------------------------------------------------------------------------

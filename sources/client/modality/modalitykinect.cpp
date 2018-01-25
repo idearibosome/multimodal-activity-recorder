@@ -97,6 +97,7 @@ bool KinectThread::startAcquisition() {
     QMutexLocker locker(&mutex);
 
     if (!isRunning()) {
+        startRecordingAcquisitionTimestamp();
         start();
     }
 
@@ -161,6 +162,7 @@ void KinectThread::run() {
             QDataStream outStream(&byteArray, QIODevice::WriteOnly);
             outStream.setVersion(QDataStream::Qt_5_9);
 
+            outStream << getAcquisitionTimestamp();
             outStream << ((int)colorFormat);
             outStream << colorData;
             outStream << depthData;

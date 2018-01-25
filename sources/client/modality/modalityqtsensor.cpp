@@ -9,24 +9,122 @@ ModalityQtSensor::ModalityQtSensor(QObject *parent) : Modality(parent) {
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
 bool ModalityQtSensor::initialize(QVariantMap configuration) {
+    QVariantMap sensorMap = configuration.value("sensor").toMap();
+    if (sensorMap.isEmpty()) return false;
+
+    sensorType = sensorMap.value("type").toString();
+    if (sensorType.isEmpty()) return false;
+
+    QByteArray sensorId = sensorMap.value("identifier").toByteArray();
+
+    if (sensorType == "accelerometer") {
+        sensor = new QAccelerometer(this);
+    }
+    else if (sensorType == "compass") {
+        sensor = new QCompass(this);
+    }
+    else if (sensorType == "gyroscope") {
+        sensor = new QGyroscope(this);
+    }
+    else if (sensorType == "lightsensor") {
+        sensor = new QLightSensor(this);
+    }
+    else if (sensorType == "magnetometer") {
+        sensor = new QMagnetometer(this);
+    }
+    else {
+        return false;
+    }
+
+    sensor->setIdentifier(sensorId);
+    sensor->setAlwaysOn(true);
+
+    QObject::connect(sensor, SIGNAL(readingChanged()), this, SLOT(slotSensorReadingChanged()));
+
     return Modality::initialize(configuration);
 }
 //---------------------------------------------------------------------------
 void ModalityQtSensor::reset() {
+    if (sensor) {
+        sensor->deleteLater();
+        sensor = NULL;
+    }
+
     Modality::reset();
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
 void ModalityQtSensor::slotSensorReadingChanged() {
+    QByteArray byteArray;
+    QDataStream outStream(&byteArray, QIODevice::WriteOnly);
+    outStream.setVersion(QDataStream::Qt_5_9);
 
+    outStream << getAcquisitionTimestamp();
+    outStream << sensorType;
+
+    bool isDataAcquired = false;
+
+    if (sensorType == "accelerometer") {
+        QAccelerometerReading *reading = ((QAccelerometer *)sensor)->reading();
+        if (reading) {
+            outStream << reading->x();
+            outStream << reading->y();
+            outStream << reading->z();
+            isDataAcquired = true;
+        }
+    }
+    else if (sensorType == "compass") {
+        QCompassReading *reading = ((QCompass *)sensor)->reading();
+        if (reading) {
+            outStream << reading->calibrationLevel();
+            outStream << reading->azimuth();
+            isDataAcquired = true;
+        }
+    }
+    else if (sensorType == "gyroscope") {
+        QGyroscopeReading *reading = ((QGyroscope *)sensor)->reading();
+        if (reading) {
+            outStream << reading->x();
+            outStream << reading->y();
+            outStream << reading->z();
+            isDataAcquired = true;
+        }
+    }
+    else if (sensorType == "lightsensor") {
+        QLightReading *reading = ((QLightSensor *)sensor)->reading();
+        if (reading) {
+            outStream << reading->lux();
+            isDataAcquired = true;
+        }
+    }
+    else if (sensorType == "magnetometer") {
+        QMagnetometerReading *reading = ((QMagnetometer *)sensor)->reading();
+        if (reading) {
+            outStream << reading->calibrationLevel();
+            outStream << reading->x();
+            outStream << reading->y();
+            outStream << reading->z();
+            isDataAcquired = true;
+        }
+    }
+
+    if (isDataAcquired) {
+        emit acquired(byteArray);
+    }
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
 bool ModalityQtSensor::startAcquisition() {
-    return false;
+    if (!sensor) return false;
+
+    startRecordingAcquisitionTimestamp();
+    sensor->setActive(true);
+
+    return true;
 }
 //---------------------------------------------------------------------------
 void ModalityQtSensor::stopAcquisition() {
+    sensor->setActive(false);
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
