@@ -26,7 +26,6 @@ public:
     virtual bool startAcquisition() = 0;
     virtual void stopAcquisition() = 0;
 
-protected:
     void startRecordingAcquisitionTimestamp();
     qint64 getAcquisitionTimestamp();
 

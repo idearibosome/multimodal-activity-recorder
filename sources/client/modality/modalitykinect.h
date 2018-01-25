@@ -15,12 +15,16 @@
 
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
+class ModalityKinect;
+
 class KinectThread : public QThread
 {
     Q_OBJECT
 public:
     KinectThread(QObject *parent = nullptr);
     ~KinectThread();
+
+    ModalityKinect *modality;
 
     bool initialize();
     void reset();

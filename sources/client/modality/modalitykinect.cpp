@@ -97,7 +97,7 @@ bool KinectThread::startAcquisition() {
     QMutexLocker locker(&mutex);
 
     if (!isRunning()) {
-        startRecordingAcquisitionTimestamp();
+        modality->startRecordingAcquisitionTimestamp();
         start();
     }
 
@@ -162,7 +162,7 @@ void KinectThread::run() {
             QDataStream outStream(&byteArray, QIODevice::WriteOnly);
             outStream.setVersion(QDataStream::Qt_5_9);
 
-            outStream << getAcquisitionTimestamp();
+            outStream << modality->getAcquisitionTimestamp();
             outStream << ((int)colorFormat);
             outStream << colorData;
             outStream << depthData;
@@ -190,6 +190,8 @@ void KinectThread::run() {
 //---------------------------------------------------------------------------
 ModalityKinect::ModalityKinect(QObject *parent) : Modality(parent) {
     type = "kinect";
+
+    kinectThread.modality = this;
 
     QObject::connect(&kinectThread, SIGNAL(acquired(QByteArray)), this, SLOT(slotKinectThreadAcquired(QByteArray)));
 }
