@@ -25,6 +25,8 @@ Window {
         IRQM.SignalHandler.bindSignal("mmrserver", "listening", this, "serverListening");
         IRQM.SignalHandler.bindSignal("mmrserver", "listeningFailed", this, "serverListeningFailed");
         IRQM.SignalHandler.bindSignal("mmrserver", "stopped", this, "serverStopped");
+
+        IRQM.SignalHandler.bindSignal("mmrconnection", "receivedData", this, "connectionReceivedData");
     }
 
     Component.onDestruction: {
@@ -50,6 +52,10 @@ Window {
     function serverStopped() {
         isConnectionOperating = false;
         isRunning = false;
+    }
+    //---------------------------------------------------------------------------
+    //---------------------------------------------------------------------------
+    function connectionReceivedData(identifier, size) {
     }
     //---------------------------------------------------------------------------
     //---------------------------------------------------------------------------
@@ -149,6 +155,26 @@ Window {
                         ColumnLayout {
                             Layout.fillWidth: true
                             spacing: 8
+
+                            RowLayout {
+                                Layout.fillWidth: true
+                                spacing: 8
+
+                                Text {
+                                    text: "Storage Path: "
+                                }
+                                TextField {
+                                    id: storagePathTextField
+                                    Layout.fillWidth: true
+                                    text: ""
+                                }
+                                Button {
+                                    text: "Set"
+                                    onClicked: {
+                                        mServer.setStorageBasePath(storagePathTextField.text);
+                                    }
+                                }
+                            }
 
                             Button {
                                 Layout.fillWidth: true

@@ -1,6 +1,9 @@
 #ifndef MMRCONNECTION_H
 #define MMRCONNECTION_H
 
+#include <QDataStream>
+#include <QDir>
+#include <QFile>
 #include <QObject>
 #include <QWebSocket>
 
@@ -14,6 +17,11 @@ public:
 
     QWebSocket *ws = NULL;
 
+    QFile *file = NULL;
+    QDataStream *fileDataStream = NULL;
+
+    QString storageBasePath;
+
     QString type;
     QString identifier;
 
@@ -22,6 +30,10 @@ public:
     void handleRequest(MMRWSData *wsData);
     void handleRequestRegister(QString type, QVariantMap data);
     void handleRequestData(QString type, QVariantMap data);
+
+private:
+    void openFile();
+    void closeFile();
 
 signals:
 

@@ -19,6 +19,7 @@ void MMRServer::slotWsServerNewConnection() {
     QObject::connect(socket, SIGNAL(disconnected()), this, SLOT(slotWsDisconnected()));
 
     MMRConnection *connection = new MMRConnection(this);
+    connection->storageBasePath = storageBasePath;
     connection->ws = socket;
 
     wsMap.insert(socket, connection);
@@ -84,6 +85,11 @@ void MMRServer::stopServer() {
 
     this->log("ws: Stopped");
     IRQMSignalHandler::sendSignal("mmrserver", "stopped");
+}
+//---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+void MMRServer::setStorageBasePath(QString path) {
+    storageBasePath = path;
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------

@@ -31,6 +31,8 @@ void MMRConnection::handleRequestRegister(QString type, QVariantMap data) {
     this->type = data.value("type").toString();
     this->identifier = data.value("identifier").toString();
 
+    openFile();
+
     MMRWSData wsData;
     wsData.requestType = type;
     wsData.dataType = "response";
@@ -40,7 +42,46 @@ void MMRConnection::handleRequestRegister(QString type, QVariantMap data) {
 }
 //---------------------------------------------------------------------------
 void MMRConnection::handleRequestData(QString type, QVariantMap data) {
-    this->log(QString("ws: data (size=%1)").arg(data.value("data").toByteArray().size()));
+    if (!fileDataStream) return;
+
+    QByteArray dataByteArray = data.value("data").toByteArray();
+
+    *fileDataStream << dataByteArray;
+
+    IRQMSignalHandler::sendSignal("mmrconnection", "receivedData", identifier, dataByteArray.size());
+}
+//---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+void MMRConnection::openFile() {
+    if (file || fileDataStream) return;
+
+    QString filePath = storageBasePath + QDir::separator() + type + "_" + identifier + ".mmr";
+    filePath = QDir::cleanPath(filePath);
+
+    file = new QFile(filePath, this);
+    if (!file->open(QIODevice::WriteOnly)) {
+        this->log("Failed to open file output device");
+
+        file->deleteLater();
+        file = NULL;
+        return;
+    }
+
+    fileDataStream = new QDataStream(file);
+    fileDataStream->setVersion(QDataStream::Qt_5_9);
+}
+//---------------------------------------------------------------------------
+void MMRConnection::closeFile() {
+    if (!fileDataStream) return;
+
+    delete fileDataStream;
+    fileDataStream = NULL;
+
+    if (!file) return;
+
+    file->close();
+    file->deleteLater();
+    file = NULL;
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------

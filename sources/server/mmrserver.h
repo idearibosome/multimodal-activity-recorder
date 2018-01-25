@@ -21,6 +21,8 @@ public:
     Q_INVOKABLE void startServer(int port);
     Q_INVOKABLE void stopServer();
 
+    Q_INVOKABLE void setStorageBasePath(QString path);
+
     Q_INVOKABLE void requestPrepareModalities();
     Q_INVOKABLE void requestStartModalities();
     Q_INVOKABLE void requestStopModalities();
@@ -30,6 +32,8 @@ public:
 private:
     QWebSocketServer *wsServer = 0;
     QMap<QWebSocket *, MMRConnection *> wsMap;
+
+    QString storageBasePath;
 
     void initializeWsServer();
 
