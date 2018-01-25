@@ -15,6 +15,7 @@ public:
     explicit ModalityQtSensor(QObject *parent = nullptr);
 
     QSensor *sensor;
+    QString sensorType;
 
     bool initialize(QVariantMap configuration) override;
     void reset() override;

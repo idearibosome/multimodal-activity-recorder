@@ -5,6 +5,14 @@ import QtQuick.Layouts 1.3
 ModalityPage {
     id: container
 
+    property ComboBox targetSensorComboBox
+
+    onIdentifierChanged: {
+        if (targetSensorComboBox) {
+            targetSensorComboBox.updateConfiguration();
+        }
+    }
+
     content: ColumnLayout {
         Layout.fillWidth: true
         spacing: 8
@@ -25,6 +33,8 @@ ModalityPage {
                 property var sensors: []
 
                 Component.onCompleted: {
+                    container.targetSensorComboBox = this;
+
                     sensors = qMain.modalityQtSensorGetAvailableSensors();
 
                     var modelTextList = [];
@@ -39,13 +49,16 @@ ModalityPage {
                 }
 
                 function updateConfiguration() {
-                    console.log(currentIndex);
+                    if (container.identifier.length <= 0) return;
                     if (currentIndex < 0) return;
                     if (currentIndex >= sensors.length) return;
 
                     qMain.clientSetConfiguration(container.identifier, "sensor", sensors[currentIndex]);
                 }
 
+                onSensorsChanged: {
+                    updateConfiguration();
+                }
                 onCurrentIndexChanged: {
                     updateConfiguration();
                 }
