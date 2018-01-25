@@ -2,9 +2,9 @@
 
 #include "mmrclient.h"
 
-#include "modality/modality.h"
-#include "modality/modalitykinect.h"
-#include "modality/modalityqtsensor.h"
+#include "../shared/modality/modality.h"
+#include "../shared/modality/modalitykinect.h"
+#include "../shared/modality/modalityqtsensor.h"
 
 QuickMain *qMain;
 //---------------------------------------------------------------------------

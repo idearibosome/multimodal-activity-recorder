@@ -1,6 +1,6 @@
 #include "mmrclient.h"
 
-#include "modality/modality.h"
+#include "../shared/modality/modality.h"
 
 #include "../shared/irqm/irqmsignalhandler.h"
 

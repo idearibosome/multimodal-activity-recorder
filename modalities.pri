@@ -1,12 +1,12 @@
 # general
-HEADERS += $$PWD/sources/client/modality/modality.h
-SOURCES += $$PWD/sources/client/modality/modality.cpp
+HEADERS += $$PWD/sources/shared/modality/modality.h
+SOURCES += $$PWD/sources/shared/modality/modality.cpp
 
 
 # kinect
 contains(MMRModalities, "kinect") {
-    HEADERS += $$PWD/sources/client/modality/modalitykinect.h
-    SOURCES += $$PWD/sources/client/modality/modalitykinect.cpp
+    HEADERS += $$PWD/sources/shared/modality/modalitykinect.h
+    SOURCES += $$PWD/sources/shared/modality/modalitykinect.cpp
 
     win32 {
         DEFINES += MMR_MODALITY_KINECT
@@ -25,8 +25,8 @@ contains(MMRModalities, "kinect") {
 contains(MMRModalities, "qtsensor") {
     QT += sensors
 
-    HEADERS += $$PWD/sources/client/modality/modalityqtsensor.h
-    SOURCES += $$PWD/sources/client/modality/modalityqtsensor.cpp
+    HEADERS += $$PWD/sources/shared/modality/modalityqtsensor.h
+    SOURCES += $$PWD/sources/shared/modality/modalityqtsensor.cpp
 
     DEFINES += MMR_MODALITY_QTSENSOR
 }
