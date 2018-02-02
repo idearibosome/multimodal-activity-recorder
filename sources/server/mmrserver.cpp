@@ -9,6 +9,44 @@
 //---------------------------------------------------------------------------
 MMRServer::MMRServer(QObject *parent) : QObject(parent) {
     initializeWsServer();
+
+    /*
+    QFile file("d:\\Testbed\\data\\pilot_01\\qtsensor_6337120d070a43ccae9bbcb17fdabcfa.mmr");
+    file.open(QIODevice::ReadOnly);
+    QDataStream fileInStream(&file);
+    fileInStream.setVersion(QDataStream::Qt_5_9);
+
+    while (!fileInStream.atEnd()) {
+        QByteArray data;
+        fileInStream >> data;
+
+        QDataStream inStream(data);
+        inStream.setVersion(QDataStream::Qt_5_9);
+
+        qint64 timestamp;
+        inStream >> timestamp;
+
+        QString sensorType;
+        inStream >> sensorType;
+
+        if (sensorType == "accelerometer" || sensorType == "gyroscope") {
+            qreal x, y, z;
+            inStream >> x >> y >> z;
+            qDebug() << timestamp << sensorType << x << y << z;
+        }
+        else if (sensorType == "lightsensor") {
+            qreal lux;
+            inStream >> lux;
+            qDebug() << timestamp << sensorType << lux;
+        }
+        else if (sensorType == "magnetometer") {
+            qreal cal, x, y, z;
+            inStream >> cal >> x >> y >> z;
+            qDebug() << timestamp << sensorType << cal << x << y << z;
+        }
+    }
+    file.close();
+    */
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
