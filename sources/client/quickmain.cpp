@@ -38,15 +38,6 @@ QVariantList QuickMain::getAvailableModalities() {
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
-QVariantList QuickMain::modalityQtSensorGetAvailableSensors() {
-#if defined(MMR_MODALITY_QTSENSOR)
-    return ModalityQtSensor::getAvailableSensors();
-#else
-    return QVariantList();
-#endif
-}
-//---------------------------------------------------------------------------
-//---------------------------------------------------------------------------
 QString QuickMain::createClient(QVariantMap modality) {
     QString type = modality.value("type").toString();
 
@@ -80,6 +71,13 @@ MMRClient *QuickMain::getClient(QString identifier) {
     MMRClient *client = clientList.value(identifier, NULL);
 
     return client;
+}
+//---------------------------------------------------------------------------
+Modality *QuickMain::getClientModality(QString identifier) {
+    MMRClient *client = getClient(identifier);
+    if (!client) return 0;
+
+    return client->modality;
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------

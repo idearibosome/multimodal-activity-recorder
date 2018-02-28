@@ -13,6 +13,17 @@ ModalityPage {
         }
     }
 
+    //---------------------------------------------------------------------------
+    //---------------------------------------------------------------------------
+    function initialize() {
+        var modality = qMain.getClientModality(identifier);
+
+        targetSensorComboBox.sensors = modality.getAvailableSensors();
+        targetSensorComboBox.updateConfiguration();
+    }
+    //---------------------------------------------------------------------------
+    //---------------------------------------------------------------------------
+
     content: ColumnLayout {
         Layout.fillWidth: true
         spacing: 8
@@ -34,18 +45,6 @@ ModalityPage {
 
                 Component.onCompleted: {
                     container.targetSensorComboBox = this;
-
-                    sensors = qMain.modalityQtSensorGetAvailableSensors();
-
-                    var modelTextList = [];
-                    for (var i in sensors) {
-                        var sensor = sensors[i];
-                        modelTextList.push(sensor["text"] + " (" + sensor["identifier"] + ")");
-                    }
-
-                    model = modelTextList;
-
-                    updateConfiguration();
                 }
 
                 function updateConfiguration() {
@@ -57,6 +56,13 @@ ModalityPage {
                 }
 
                 onSensorsChanged: {
+                    var modelTextList = [];
+                    for (var i in sensors) {
+                        var sensor = sensors[i];
+                        modelTextList.push(sensor["text"] + " (" + sensor["identifier"] + ")");
+                    }
+                    model = modelTextList;
+
                     updateConfiguration();
                 }
                 onCurrentIndexChanged: {

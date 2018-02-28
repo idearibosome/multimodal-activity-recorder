@@ -23,7 +23,7 @@ public:
     bool startAcquisition() override;
     void stopAcquisition() override;
 
-    static QVariantList getAvailableSensors();
+    Q_INVOKABLE static QVariantList getAvailableSensors();
 
 private slots:
     void slotSensorReadingChanged();

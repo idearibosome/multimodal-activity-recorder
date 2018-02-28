@@ -5,6 +5,7 @@
 #include <QVariant>
 
 class MMRClient;
+class Modality;
 
 class QuickMain : public QObject
 {
@@ -16,11 +17,10 @@ public:
 
     Q_INVOKABLE QVariantList getAvailableModalities();
 
-    Q_INVOKABLE QVariantList modalityQtSensorGetAvailableSensors();
-
     Q_INVOKABLE QString createClient(QVariantMap modality);
     Q_INVOKABLE void destroyClient(QString identifier);
     MMRClient *getClient(QString identifier);
+    Q_INVOKABLE Modality *getClientModality(QString identifier);
 
     Q_INVOKABLE void clientSetConfiguration(QString identifier, QString key, QVariant value);
     Q_INVOKABLE void clientConnectServer(QString identifier, QString url);
