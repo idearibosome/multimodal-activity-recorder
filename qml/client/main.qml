@@ -59,6 +59,8 @@ Window {
         modalityObject.title = text;
         modalityObject.identifier = identifier;
 
+        modalityObject.initialize();
+
         tabView.currentIndex = tabView.count - 1;
     }
     //---------------------------------------------------------------------------
