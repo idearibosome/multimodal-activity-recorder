@@ -75,6 +75,7 @@ void MMRClient::setConfiguration(QString key, QVariant value) {
 //---------------------------------------------------------------------------
 void MMRClient::registerModality(Modality *modality) {
     modality->setParent(this);
+    modality->identifier = identifier;
     this->modality = modality;
 
     QObject::connect(modality, SIGNAL(acquired(QByteArray)), this, SLOT(slotModalityAcquired(QByteArray)));
