@@ -16,6 +16,11 @@ Window {
 
     property var clientIdentifiers: []
 
+    property var componentsOfModalityTypes: ({
+        "kinect": componentModalityKinect,
+        "qtsensor": componentModalityQtSensor
+    })
+
     property TextArea logTextArea
 
     Component.onCompleted: {
@@ -47,13 +52,7 @@ Window {
 
         clientIdentifiers.push(identifier);
 
-        var modalityObject;
-        if (type === "kinect") {
-            modalityObject = componentModalityKinect.createObject(tabObject);
-        }
-        else if (type === "qtsensor") {
-            modalityObject = componentModalityQtSensor.createObject(tabObject);
-        }
+        var modalityObject = componentsOfModalityTypes[type].createObject(tabObject);
         if (!modalityObject) return;
 
         modalityObject.title = text;
