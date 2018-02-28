@@ -3,6 +3,7 @@
 #include "quickmain.h"
 
 #include "../shared/irqm/irqmconfigurator.h"
+#include "../shared/modality/modalityconfigurator.h"
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
 int main(int argc, char *argv[]) {
@@ -19,6 +20,7 @@ int main(int argc, char *argv[]) {
 
     // engine contexts
     IRQMConfigurator::registerAllParams(&engine);
+    ModalityConfigurator::registerModules(&engine);
 
 
     // objects > quick main
