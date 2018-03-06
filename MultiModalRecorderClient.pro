@@ -76,6 +76,7 @@ win32 {
 # modalities
 MMRModalities += kinect
 MMRModalities += qtsensor
+MMRModalities += bitalino
 include(modalities.pri)
 
 

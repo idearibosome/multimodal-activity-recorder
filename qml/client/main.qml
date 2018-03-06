@@ -18,7 +18,8 @@ Window {
 
     property var componentsOfModalityTypes: ({
         "kinect": componentModalityKinect,
-        "qtsensor": componentModalityQtSensor
+        "qtsensor": componentModalityQtSensor,
+        "bitalino": componentModalityBITalino
     })
 
     property TextArea logTextArea
@@ -85,6 +86,10 @@ Window {
     Component {
         id: componentModalityQtSensor
         ModalityQtSensorPage {}
+    }
+    Component {
+        id: componentModalityBITalino
+        ModalityBITalinoPage {}
     }
 
     SplitView {

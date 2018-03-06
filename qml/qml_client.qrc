@@ -4,5 +4,6 @@
         <file>client/ModalityPage.qml</file>
         <file>client/ModalityKinectPage.qml</file>
         <file>client/ModalityQtSensorPage.qml</file>
+        <file>client/ModalityBITalinoPage.qml</file>
     </qresource>
 </RCC>
