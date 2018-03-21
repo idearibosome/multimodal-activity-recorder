@@ -3,7 +3,7 @@
 MultiModalRecorder enables retrieving human activity recognition data from multiple sensors simultaneously.
 
 
-# Supporting platforms
+# Supported platforms
 
 - Windows 7+
 - macOS 10.10+
@@ -11,7 +11,7 @@ MultiModalRecorder enables retrieving human activity recognition data from multi
 - Android 5.0+ (API Level 21+)
 
 
-# Supporting sensors
+# Supported sensors
 
 - Hardware-integrated sensors (iOS/Android)
   - Accelerometer
