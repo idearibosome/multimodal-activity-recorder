@@ -189,7 +189,7 @@ void KinectThread::run() {
     }
 
     delete colorFrameBuffer;
-    delete depthFrameBuffer;
+    // do not delete depthFrameBuffer, since it is handled by depthFrameReader
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
