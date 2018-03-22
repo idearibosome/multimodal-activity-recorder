@@ -3,7 +3,9 @@
 
 #if defined(MMR_MODALITY_KINECT)
 
+#include <QBuffer>
 #include <QDataStream>
+#include <QImage>
 #include <QMutex>
 #include <QMutexLocker>
 #include <QObject>
@@ -25,6 +27,8 @@ public:
     ~KinectThread();
 
     ModalityKinect *modality;
+
+    int colorFrameHeight;
 
     bool initialize();
     void reset();
@@ -60,6 +64,8 @@ public:
     explicit ModalityKinect(QObject *parent = nullptr);
 
     KinectThread kinectThread;
+
+    int colorFrameHeight = 1080;
 
     bool initialize(QVariantMap configuration) override;
     void reset() override;

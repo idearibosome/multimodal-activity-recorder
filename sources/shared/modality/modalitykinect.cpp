@@ -153,16 +153,27 @@ void KinectThread::run() {
         } while (hResult == E_PENDING);
 
         if (hasColorFrame && hasDepthFrame) {
-            QByteArray colorData((const char *)colorFrameBuffer, colorFrameBufferSize);
+            qint64 timestamp = modality->getAcquisitionTimestamp();
+
+            int colorFrameWidth = (colorFrameHeight * 16 / 9);
+
+            QImage colorImage = QImage(colorFrameBuffer, 1920, 1080, QImage::Format_RGBA8888);
+            QImage scaledColorImage = colorImage.scaled(colorFrameWidth, colorFrameHeight);
+            scaledColorImage = scaledColorImage.convertToFormat(QImage::Format_RGB888);
+            QByteArray colorData((const char *)scaledColorImage.bits(), scaledColorImage.byteCount());
+
+            static int depthFrameWidth = 512;
+            static int depthFrameHeight = 424;
+
             QByteArray depthData((const char *)depthFrameBuffer, depthFrameBufferSize * sizeof(unsigned short));
 
             QByteArray byteArray;
             QDataStream outStream(&byteArray, QIODevice::WriteOnly);
             outStream.setVersion(QDataStream::Qt_5_9);
 
-            outStream << modality->getAcquisitionTimestamp();
-            outStream << colorData;
-            outStream << depthData;
+            outStream << timestamp;
+            outStream << colorFrameWidth << colorFrameHeight << colorData;
+            outStream << depthFrameWidth << depthFrameHeight << depthData;
 
             if (abort) break;
 
@@ -195,8 +206,12 @@ ModalityKinect::ModalityKinect(QObject *parent) : Modality(parent) {
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
 bool ModalityKinect::initialize(QVariantMap configuration) {
+    colorFrameHeight = configuration.value("color_height").toInt();
+
     bool res = kinectThread.initialize();
     if (!res) return false;
+
+    kinectThread.colorFrameHeight = colorFrameHeight;
 
     return Modality::initialize(configuration);
 }
