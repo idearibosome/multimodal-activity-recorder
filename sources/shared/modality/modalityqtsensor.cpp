@@ -55,11 +55,12 @@ void ModalityQtSensor::reset() {
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
 void ModalityQtSensor::slotSensorReadingChanged() {
+    qint64 timestamp = getAcquisitionTimestamp();
+
     QByteArray byteArray;
     QDataStream outStream(&byteArray, QIODevice::WriteOnly);
     outStream.setVersion(QDataStream::Qt_5_9);
 
-    outStream << getAcquisitionTimestamp();
     outStream << sensorType;
 
     bool isDataAcquired = false;
@@ -109,7 +110,7 @@ void ModalityQtSensor::slotSensorReadingChanged() {
     }
 
     if (isDataAcquired) {
-        emit acquired(byteArray);
+        emit acquired(timestamp, byteArray);
     }
 }
 //---------------------------------------------------------------------------

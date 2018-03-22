@@ -52,7 +52,7 @@ private slots:
     void slotWsError(QAbstractSocket::SocketError error);
     void slotWsBinaryMessageReceived(QByteArray message);
 
-    void slotModalityAcquired(QByteArray data);
+    void slotModalityAcquired(qint64 timestamp, QByteArray data);
 
 };
 

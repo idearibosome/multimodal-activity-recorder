@@ -30,7 +30,7 @@ public:
     qint64 getAcquisitionTimestamp();
 
 signals:
-    void acquired(QByteArray data);
+    void acquired(qint64 timestamp, QByteArray data);
 
 public slots:
 };

@@ -44,9 +44,10 @@ void MMRConnection::handleRequestRegister(QString type, QVariantMap data) {
 void MMRConnection::handleRequestData(QString type, QVariantMap data) {
     if (!fileDataStream) return;
 
+    qint64 timestamp = data.value("timestamp").toULongLong();
     QByteArray dataByteArray = data.value("data").toByteArray();
 
-    *fileDataStream << dataByteArray;
+    *fileDataStream << timestamp << dataByteArray;
 
     IRQMSignalHandler::sendSignal("mmrconnection", "receivedData", identifier, dataByteArray.size());
 

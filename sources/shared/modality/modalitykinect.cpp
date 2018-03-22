@@ -171,13 +171,12 @@ void KinectThread::run() {
             QDataStream outStream(&byteArray, QIODevice::WriteOnly);
             outStream.setVersion(QDataStream::Qt_5_9);
 
-            outStream << timestamp;
             outStream << colorFrameWidth << colorFrameHeight << colorData;
             outStream << depthFrameWidth << depthFrameHeight << depthData;
 
             if (abort) break;
 
-            emit acquired(byteArray);
+            emit acquired(timestamp, byteArray);
         }
 
         if (colorFrame) {
@@ -201,7 +200,7 @@ ModalityKinect::ModalityKinect(QObject *parent) : Modality(parent) {
 
     kinectThread.modality = this;
 
-    QObject::connect(&kinectThread, SIGNAL(acquired(QByteArray)), this, SLOT(slotKinectThreadAcquired(QByteArray)));
+    QObject::connect(&kinectThread, SIGNAL(acquired(qint64,QByteArray)), this, SLOT(slotKinectThreadAcquired(qint64,QByteArray)));
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
@@ -223,8 +222,8 @@ void ModalityKinect::reset() {
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
-void ModalityKinect::slotKinectThreadAcquired(QByteArray data) {
-    emit acquired(data);
+void ModalityKinect::slotKinectThreadAcquired(qint64 timestamp, QByteArray data) {
+    emit acquired(timestamp, data);
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------

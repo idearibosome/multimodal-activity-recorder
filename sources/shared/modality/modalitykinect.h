@@ -37,7 +37,7 @@ public:
     void stopAcquisition();
 
 signals:
-    void acquired(QByteArray data);
+    void acquired(qint64 timestamp, QByteArray data);
 
 protected:
     void run() override;
@@ -74,7 +74,7 @@ public:
     void stopAcquisition() override;
 
 private slots:
-    void slotKinectThreadAcquired(QByteArray data);
+    void slotKinectThreadAcquired(qint64 timestamp, QByteArray data);
 };
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------

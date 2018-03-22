@@ -52,10 +52,11 @@ void MMRClient::slotWsBinaryMessageReceived(QByteArray message) {
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
-void MMRClient::slotModalityAcquired(QByteArray data) {
+void MMRClient::slotModalityAcquired(qint64 timestamp, QByteArray data) {
     MMRWSData wsData;
     wsData.requestType = "data";
     wsData.dataType = "request";
+    wsData.data.insert("timestamp", timestamp);
     wsData.data.insert("data", data);
 
     ws->sendBinaryMessage(wsData.toByteArray());
@@ -78,7 +79,7 @@ void MMRClient::registerModality(Modality *modality) {
     modality->identifier = identifier;
     this->modality = modality;
 
-    QObject::connect(modality, SIGNAL(acquired(QByteArray)), this, SLOT(slotModalityAcquired(QByteArray)));
+    QObject::connect(modality, SIGNAL(acquired(qint64,QByteArray)), this, SLOT(slotModalityAcquired(qint64,QByteArray)));
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
