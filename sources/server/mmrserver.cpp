@@ -168,6 +168,18 @@ void MMRServer::requestStopModalities() {
     data->deleteLater();
 }
 //---------------------------------------------------------------------------
+void MMRServer::requestFinalizeModalities() {
+    if (!wsServer->isListening()) return;
+
+    MMRWSData *data = new MMRWSData();
+    data->requestType = "finalize";
+    data->dataType = "request";
+
+    sendRequest(data);
+
+    data->deleteLater();
+}
+//---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
 void MMRServer::sendRequest(MMRWSData *data) {
     QByteArray message = data->toByteArray();

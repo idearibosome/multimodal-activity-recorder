@@ -216,6 +216,14 @@ Window {
                                     mServer.requestStopModalities();
                                 }
                             }
+                            Button {
+                                Layout.fillWidth: true
+                                text: "Finalize Modalities"
+
+                                onClicked: {
+                                    mServer.requestFinalizeModalities();
+                                }
+                            }
                         }
                     }
                 }

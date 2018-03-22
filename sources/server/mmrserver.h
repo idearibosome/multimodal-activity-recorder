@@ -26,6 +26,7 @@ public:
     Q_INVOKABLE void requestPrepareModalities();
     Q_INVOKABLE void requestStartModalities();
     Q_INVOKABLE void requestStopModalities();
+    Q_INVOKABLE void requestFinalizeModalities();
 
     void sendRequest(MMRWSData *wsData);
 
