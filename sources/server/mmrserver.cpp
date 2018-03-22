@@ -83,6 +83,7 @@ void MMRServer::slotWsDisconnected() {
 
     MMRConnection *connection = wsMap.value(socket, NULL);
     if (connection) {
+        connection->finalize();
         connection->deleteLater();
     }
 

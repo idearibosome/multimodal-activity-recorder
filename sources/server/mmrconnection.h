@@ -31,6 +31,8 @@ public:
     void handleRequestRegister(QString type, QVariantMap data);
     void handleRequestData(QString type, QVariantMap data);
 
+    void finalize();
+
 private:
     void prepareFile();
     void closeFile();
