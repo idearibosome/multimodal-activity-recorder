@@ -116,18 +116,17 @@ void KinectThread::stopAcquisition() {
 void KinectThread::run() {
     HRESULT hResult;
 
-    unsigned int colorFrameBufferSize = 0;
-    unsigned char *colorFrameBuffer;
+    unsigned int colorFrameBufferSize = 1920 * 1080 * 4 * sizeof(unsigned char);
+    unsigned char *colorFrameBuffer = new unsigned char[colorFrameBufferSize];
     bool hasColorFrame = false;
 
     unsigned int depthFrameBufferSize = 0;
-    unsigned short *depthFrameBuffer;
+    unsigned short *depthFrameBuffer = 0;
     bool hasDepthFrame = false;
 
     while (true) {
         if (abort) break;
 
-        ColorImageFormat colorFormat;
         IColorFrame *colorFrame = NULL;
         IDepthFrame *depthFrame = NULL;
 
@@ -137,8 +136,7 @@ void KinectThread::run() {
         do {
             hResult = colorFrameReader->AcquireLatestFrame(&colorFrame);
             if (SUCCEEDED(hResult)) {
-                hResult = colorFrame->get_RawColorImageFormat(&colorFormat);
-                hResult = colorFrame->AccessRawUnderlyingBuffer(&colorFrameBufferSize, (BYTE **)&colorFrameBuffer);
+                hResult = colorFrame->CopyConvertedFrameDataToArray(colorFrameBufferSize, (BYTE *)colorFrameBuffer, ColorImageFormat_Rgba);
                 if (SUCCEEDED(hResult)) {
                     hasColorFrame = true;
                 }
@@ -163,7 +161,6 @@ void KinectThread::run() {
             outStream.setVersion(QDataStream::Qt_5_9);
 
             outStream << modality->getAcquisitionTimestamp();
-            outStream << ((int)colorFormat);
             outStream << colorData;
             outStream << depthData;
 
