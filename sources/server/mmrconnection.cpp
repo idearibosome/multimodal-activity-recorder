@@ -3,6 +3,7 @@
 #include "../shared/irqm/irqmsignalhandler.h"
 
 #include "../shared/mmrwsdata.h"
+#include "../shared/mmrfiledata.h"
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
 MMRConnection::MMRConnection(QObject *parent) : QObject(parent) {
@@ -31,7 +32,7 @@ void MMRConnection::handleRequestRegister(QString type, QVariantMap data) {
     this->type = data.value("type").toString();
     this->identifier = data.value("identifier").toString();
 
-    openFile();
+    prepareFile();
 
     MMRWSData wsData;
     wsData.requestType = type;
@@ -42,12 +43,12 @@ void MMRConnection::handleRequestRegister(QString type, QVariantMap data) {
 }
 //---------------------------------------------------------------------------
 void MMRConnection::handleRequestData(QString type, QVariantMap data) {
-    if (!fileDataStream) return;
+    if (!fileData) return;
 
     qint64 timestamp = data.value("timestamp").toULongLong();
     QByteArray dataByteArray = data.value("data").toByteArray();
 
-    *fileDataStream << timestamp << dataByteArray;
+    fileData->writeData(timestamp, dataByteArray);
 
     IRQMSignalHandler::sendSignal("mmrconnection", "receivedData", identifier, dataByteArray.size());
 
@@ -85,36 +86,28 @@ void MMRConnection::handleRequestData(QString type, QVariantMap data) {
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
-void MMRConnection::openFile() {
-    if (file || fileDataStream) return;
+void MMRConnection::prepareFile() {
+    if (fileData) return;
 
     QString filePath = storageBasePath + QDir::separator() + type + "_" + identifier + ".mmr";
     filePath = QDir::cleanPath(filePath);
 
-    file = new QFile(filePath, this);
-    if (!file->open(QIODevice::WriteOnly)) {
-        this->log("Failed to open file output device");
+    fileData = new MMRFileData(this);
 
-        file->deleteLater();
-        file = NULL;
-        return;
-    }
+    fileData->setHeaderInfo("type", type);
+    fileData->setHeaderInfo("identifier", identifier);
 
-    fileDataStream = new QDataStream(file);
-    fileDataStream->setVersion(QDataStream::Qt_5_9);
+    fileData->prepareWritingToFilePath(filePath);
 }
 //---------------------------------------------------------------------------
 void MMRConnection::closeFile() {
-    if (!fileDataStream) return;
+    if (!fileData) return;
 
-    delete fileDataStream;
-    fileDataStream = NULL;
+    fileData->finalizeWriting();
+    fileData->close();
 
-    if (!file) return;
-
-    file->close();
-    file->deleteLater();
-    file = NULL;
+    fileData->deleteLater();
+    fileData = NULL;
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------

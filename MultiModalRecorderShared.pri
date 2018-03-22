@@ -10,7 +10,8 @@ HEADERS += \
     $$PWD/sources/shared/irqm/irqmrandomhelper.h \
     $$PWD/sources/shared/irqm/irqmsignalhandler.h \
     $$PWD/sources/shared/irqm/irqmconfigurator.h \
-    $$PWD/sources/shared/mmrwsdata.h
+    $$PWD/sources/shared/mmrwsdata.h \
+    $$PWD/sources/shared/mmrfiledata.h
 
 SOURCES += \
     $$PWD/sources/shared/irqm/irqmfilehelper.cpp \
@@ -19,6 +20,7 @@ SOURCES += \
     $$PWD/sources/shared/irqm/irqmrandomhelper.cpp \
     $$PWD/sources/shared/irqm/irqmsignalhandler.cpp \
     $$PWD/sources/shared/irqm/irqmconfigurator.cpp \
-    $$PWD/sources/shared/mmrwsdata.cpp
+    $$PWD/sources/shared/mmrwsdata.cpp \
+    $$PWD/sources/shared/mmrfiledata.cpp
 
 INCLUDEPATH += $$PWD/sources
