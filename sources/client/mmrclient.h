@@ -38,6 +38,7 @@ public:
     void handleRequestPrepare(QString type, QVariantMap data);
     void handleRequestStart(QString type, QVariantMap data);
     void handleRequestStop(QString type, QVariantMap data);
+    void handleRequestFinalize(QString type, QVariantMap data);
 
     void handleResponse(MMRWSData *wsData);
     void handleResponseRegister(QString type, QVariantMap data);

@@ -118,6 +118,7 @@ void MMRClient::handleRequest(MMRWSData *wsData) {
     if (type == "prepare") handleRequestPrepare(type, data);
     else if (type == "start") handleRequestStart(type, data);
     else if (type == "stop") handleRequestStop(type, data);
+    else if (type == "finalize") handleRequestFinalize(type, data);
 
     wsData->deleteLater();
 }
@@ -153,6 +154,15 @@ void MMRClient::handleRequestStop(QString type, QVariantMap data) {
     this->log("Stop acquisition");
 
     modality->stopAcquisition();
+}
+//---------------------------------------------------------------------------
+void MMRClient::handleRequestFinalize(QString type, QVariantMap data) {
+    if (!modality) return;
+    this->log("Finalize modality");
+
+    disconnectServer();
+
+    modality->reset();
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
