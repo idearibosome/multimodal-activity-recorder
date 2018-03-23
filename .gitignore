@@ -10,8 +10,8 @@
 *.obj
 *.orig
 *.rej
-*.so
-*.so.*
+#*.so
+#*.so.*
 *_pch.h.cpp
 *_resource.rc
 *.qm
@@ -68,6 +68,6 @@ Thumbs.db
 
 # Binaries
 # --------
-*.dll
+#*.dll
 *.exe
 
