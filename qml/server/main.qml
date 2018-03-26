@@ -176,22 +176,6 @@ Window {
                                 }
                             }
 
-                            RowLayout {
-                                Layout.fillWidth: true
-                                spacing: 8
-
-                                Text {
-                                    text: "MariaDB Host: "
-                                }
-                                TextField {
-                                    Layout.fillWidth: true
-                                    text: ""
-                                }
-                                Button {
-                                    text: "Connect"
-                                }
-                            }
-
                             Button {
                                 Layout.fillWidth: true
                                 text: "Prepare Modalities"
