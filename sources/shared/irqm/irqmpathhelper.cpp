@@ -7,6 +7,15 @@ IRQMPathHelper::IRQMPathHelper(QObject *parent) : QObject(parent) {
 }
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
+QString IRQMPathHelper::concatenate(QString path1, QString path2) {
+    QString newPath1 = path1.replace(QRegularExpression("([\\\\/]+)$"), "");
+    QString newPath2 = path2.replace(QRegularExpression("^([\\\\/]+)"), "");
+
+    QString path = newPath1 + QDir::separator() + newPath2;
+
+    return path;
+}
+//------------------------------------------------------------------------------
 QString IRQMPathHelper::lastComponent(QString path) {
     QRegularExpression regex("^.*[\\\\/]([^\\\\/?]+)(.*)$");
 

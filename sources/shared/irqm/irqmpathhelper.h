@@ -11,6 +11,7 @@ class IRQMPathHelper : public QObject
 public:
     explicit IRQMPathHelper(QObject *parent = 0);
 
+    Q_INVOKABLE static QString concatenate(QString path1, QString path2);
     Q_INVOKABLE static QString lastComponent(QString path);
     Q_INVOKABLE static QString withoutLastComponent(QString path);
 
