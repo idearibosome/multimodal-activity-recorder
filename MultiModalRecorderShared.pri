@@ -24,3 +24,25 @@ SOURCES += \
     $$PWD/sources/shared/mmrfiledata.cpp
 
 INCLUDEPATH += $$PWD/sources
+INCLUDEPATH += $$PWD/include/common
+
+# platform specific
+win32:contains(QMAKE_HOST.arch, x86_64) {
+  LIBS += -L$$PWD/lib/win/x64
+} else:win32 {
+  LIBS += -L$$PWD/lib/win/x86
+} else:macx {
+} else:android {
+  equals(ANDROID_TARGET_ARCH, armeabi-v7a) {
+    LIBS += -L$$PWD/lib/android/armeabi-v7a
+    ANDROID_EXTRA_LIBS += \
+      $$PWD/lib/android/armeabi-v7a/libsqlite3.so
+  }
+  equals(ANDROID_TARGET_ARCH, x86) {
+    LIBS += -L$$PWD/lib/android/x86
+    ANDROID_EXTRA_LIBS += \
+      $$PWD/lib/android/x86/libsqlite3.so
+  }
+} else:ios {
+}
+
