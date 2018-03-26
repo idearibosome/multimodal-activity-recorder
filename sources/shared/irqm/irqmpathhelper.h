@@ -1,7 +1,6 @@
 #ifndef IRQMPATHHELPER_H
 #define IRQMPATHHELPER_H
 
-#include <QDir>
 #include <QFileInfo>
 #include <QObject>
 #include <QRegularExpression>

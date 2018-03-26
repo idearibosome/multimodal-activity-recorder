@@ -1,6 +1,5 @@
 import QtQuick 2.9
 import QtQuick.Controls 1.4
-import QtQuick.Dialogs 1.2
 import QtQuick.Layouts 1.3
 import QtQuick.Window 2.3
 
@@ -60,23 +59,6 @@ Window {
     }
     //---------------------------------------------------------------------------
     //---------------------------------------------------------------------------
-
-    FileDialog {
-        id: saveDirDialog
-        selectFolder: true
-        onAccepted: {
-            var path = fileUrl.toString();
-            if (path.startsWith("file:///")) {
-                path = path.replace(/^(file:\/{3})/,"");
-            }
-            else if (path.startsWith("file:")) {
-                path = path.replace(/^(file:)/,"");
-            }
-            path = decodeURIComponent(path);
-
-            storagePathTextField.text = path;
-        }
-    }
 
     SplitView {
         anchors.fill: parent
@@ -186,13 +168,6 @@ Window {
                                     Layout.fillWidth: true
                                     text: ""
                                 }
-                                Button {
-                                    text: "Browse"
-                                    onClicked: {
-                                        saveDirDialog.open();
-                                    }
-                                }
-
                                 Button {
                                     text: "Set"
                                     onClicked: {
