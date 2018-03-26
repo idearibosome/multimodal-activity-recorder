@@ -3,15 +3,17 @@
 MultiModalRecorder enables retrieving human activity recognition data from multiple sensors simultaneously.
 
 
-# Supported platforms
+## Supported platforms
 
-- Windows 7+
-- macOS 10.10+
-- iOS 10.0+
+- Windows 7+ (x86/x64)
+- ~~macOS 10.10+~~
+  - Currently, the SQLite library is missing.
+- ~~iOS 10.0+~~
+  - Currently, the SQLite library is missing.
 - Android 5.0+ (API Level 21+)
 
 
-# Supported sensors
+## Supported sensors
 
 - Hardware-integrated sensors (iOS/Android)
   - Accelerometer
@@ -22,17 +24,17 @@ MultiModalRecorder enables retrieving human activity recognition data from multi
 - BITalino BLE (macOS/iOS/Android)
 
 
-# Dependencies
+## Dependencies
 
 - Qt 5.9+
 - (Kinect) Kinect SDK v2.0
 
 
-# License
+## License
 
 TBD
 
 
-# Acknowledgement
+## Acknowledgement
 
 This work was supported by Institute for Information & communications Technology Promotion (IITP) grant funded by the Korea government (MSIT) (R7124-16-0004, Development of Intelligent Interaction Technology Based on Context Awareness and Human Intention Understanding).
