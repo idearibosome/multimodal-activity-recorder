@@ -8,6 +8,7 @@
 #include <QWebSocketServer>
 
 class MMRWSData;
+class MMRFileMetadata;
 class MMRConnection;
 
 class MMRServer : public QObject
@@ -23,26 +24,29 @@ public:
 
     Q_INVOKABLE void setStorageBasePath(QString path);
 
-    Q_INVOKABLE void requestPrepareModalities();
-    Q_INVOKABLE void requestStartModalities();
-    Q_INVOKABLE void requestStopModalities();
-    Q_INVOKABLE void requestFinalizeModalities();
+    Q_INVOKABLE void prepareModalities();
+    Q_INVOKABLE void startModalityAcquisition();
+    Q_INVOKABLE void stopModalityAcquisition();
+    Q_INVOKABLE void finalizeModalities();
 
     void sendRequest(MMRWSData *wsData);
 
 private:
     QWebSocketServer *wsServer = 0;
-    QMap<QWebSocket *, MMRConnection *> wsMap;
+    QList<MMRConnection *> connections;
+
+    MMRFileMetadata *fileMetadata = NULL;
 
     QString storageBasePath;
 
     void initializeWsServer();
 
+    void prepareFileMetadata();
+    void finalizeFileMetadata();
+
 private slots:
     void slotWsServerNewConnection();
-
-    void slotWsBinaryMessageReceived(QByteArray message);
-    void slotWsDisconnected();
+    void slotConnectionDisconnected();
 
 };
 

@@ -206,7 +206,7 @@ Window {
                                 text: "Prepare Modalities"
 
                                 onClicked: {
-                                    mServer.requestPrepareModalities();
+                                    mServer.prepareModalities();
                                 }
                             }
                             Button {
@@ -214,7 +214,7 @@ Window {
                                 text: "Start Acquisition"
 
                                 onClicked: {
-                                    mServer.requestStartModalities();
+                                    mServer.startModalityAcquisition();
                                 }
                             }
                             Button {
@@ -222,7 +222,7 @@ Window {
                                 text: "Stop Acquisition"
 
                                 onClicked: {
-                                    mServer.requestStopModalities();
+                                    mServer.stopModalityAcquisition();
                                 }
                             }
                             Button {
@@ -230,7 +230,7 @@ Window {
                                 text: "Finalize Modalities"
 
                                 onClicked: {
-                                    mServer.requestFinalizeModalities();
+                                    mServer.finalizeModalities();
                                 }
                             }
                         }

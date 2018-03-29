@@ -8,6 +8,7 @@
 #include <QWebSocket>
 
 class MMRWSData;
+class MMRFileMetadata;
 class MMRFileData;
 
 class MMRConnection : public QObject
@@ -18,6 +19,7 @@ public:
 
     QWebSocket *ws = NULL;
 
+    MMRFileMetadata *fileMetadata = NULL;
     MMRFileData *fileData = NULL;
 
     QString storageBasePath;
@@ -27,19 +29,30 @@ public:
 
     void log(QString text);
 
+    void setWebSocket(QWebSocket *ws);
+    void setFileMetadata(MMRFileMetadata *fileMetadata);
+
+    void prepare();
+    void start();
+    void stop();
+    void finalize();
+
     void handleRequest(MMRWSData *wsData);
     void handleRequestRegister(QString type, QVariantMap data);
     void handleRequestData(QString type, QVariantMap data);
 
-    void finalize();
+    void sendRequest(MMRWSData *wsData);
 
 private:
     void prepareFile();
     void closeFile();
 
 signals:
+    void disconnected();
 
 public slots:
+    void slotWsBinaryMessageReceived(QByteArray message);
+    void slotWsDisconnected();
 };
 
 #endif // MMRCONNECTION_H

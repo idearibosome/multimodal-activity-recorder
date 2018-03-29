@@ -5,6 +5,7 @@
 #include "../shared/irqm/irqmsignalhandler.h"
 
 #include "../shared/mmrwsdata.h"
+#include "../shared/mmrfilemetadata.h"
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
 MMRServer::MMRServer(QObject *parent) : QObject(parent) {
@@ -53,41 +54,22 @@ MMRServer::MMRServer(QObject *parent) : QObject(parent) {
 void MMRServer::slotWsServerNewConnection() {
     QWebSocket *socket = wsServer->nextPendingConnection();
 
-    QObject::connect(socket, SIGNAL(binaryMessageReceived(QByteArray)), this, SLOT(slotWsBinaryMessageReceived(QByteArray)));
-    QObject::connect(socket, SIGNAL(disconnected()), this, SLOT(slotWsDisconnected()));
-
     MMRConnection *connection = new MMRConnection(this);
     connection->storageBasePath = storageBasePath;
-    connection->ws = socket;
 
-    wsMap.insert(socket, connection);
+    QObject::connect(connection, SIGNAL(disconnected()), this, SLOT(slotConnectionDisconnected()));
+
+    connection->setWebSocket(socket);
+
+    connections.append(connection);
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
-void MMRServer::slotWsBinaryMessageReceived(QByteArray message) {
-    QWebSocket *socket = qobject_cast<QWebSocket *>(sender());
+void MMRServer::slotConnectionDisconnected() {
+    MMRConnection *connection = qobject_cast<MMRConnection *>(sender());
+    connection->deleteLater();
 
-    MMRConnection *connection = wsMap.value(socket, NULL);
-    if (!connection) return;
-
-    MMRWSData *wsData = new MMRWSData();
-    wsData->loadFromByteArray(message);
-
-    if (wsData->dataType == "request") {
-        connection->handleRequest(wsData);
-    }
-}
-//---------------------------------------------------------------------------
-void MMRServer::slotWsDisconnected() {
-    QWebSocket *socket = qobject_cast<QWebSocket *>(sender());
-
-    MMRConnection *connection = wsMap.value(socket, NULL);
-    if (connection) {
-        connection->finalize();
-        connection->deleteLater();
-    }
-
-    wsMap.remove(socket);
+    connections.removeAll(connection);
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
@@ -132,60 +114,59 @@ void MMRServer::setStorageBasePath(QString path) {
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
-void MMRServer::requestPrepareModalities() {
-    if (!wsServer->isListening()) return;
+void MMRServer::prepareModalities() {
+    prepareFileMetadata();
 
-    MMRWSData *data = new MMRWSData();
-    data->requestType = "prepare";
-    data->dataType = "request";
-
-    sendRequest(data);
-
-    data->deleteLater();
+    for (auto connection=connections.begin(); connection!=connections.end(); ++connection) {
+        (*connection)->setFileMetadata(fileMetadata);
+        (*connection)->prepare();
+    }
 }
 //---------------------------------------------------------------------------
-void MMRServer::requestStartModalities() {
-    if (!wsServer->isListening()) return;
-
-    MMRWSData *data = new MMRWSData();
-    data->requestType = "start";
-    data->dataType = "request";
-
-    sendRequest(data);
-
-    data->deleteLater();
+void MMRServer::startModalityAcquisition() {
+    for (auto connection=connections.begin(); connection!=connections.end(); ++connection) {
+        (*connection)->start();
+    }
 }
 //---------------------------------------------------------------------------
-void MMRServer::requestStopModalities() {
-    if (!wsServer->isListening()) return;
-
-    MMRWSData *data = new MMRWSData();
-    data->requestType = "stop";
-    data->dataType = "request";
-
-    sendRequest(data);
-
-    data->deleteLater();
+void MMRServer::stopModalityAcquisition() {
+    for (auto connection=connections.begin(); connection!=connections.end(); ++connection) {
+        (*connection)->stop();
+    }
 }
 //---------------------------------------------------------------------------
-void MMRServer::requestFinalizeModalities() {
-    if (!wsServer->isListening()) return;
+void MMRServer::finalizeModalities() {
+    for (auto connection=connections.begin(); connection!=connections.end(); ++connection) {
+        (*connection)->finalize();
+    }
 
-    MMRWSData *data = new MMRWSData();
-    data->requestType = "finalize";
-    data->dataType = "request";
-
-    sendRequest(data);
-
-    data->deleteLater();
+    finalizeFileMetadata();
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
 void MMRServer::sendRequest(MMRWSData *data) {
-    QByteArray message = data->toByteArray();
-    foreach (QWebSocket *socket, wsMap.keys()) {
-        socket->sendBinaryMessage(message);
+    for (auto connection=connections.begin(); connection!=connections.end(); ++connection) {
+        (*connection)->sendRequest(data);
     }
+}
+//---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+void MMRServer::prepareFileMetadata() {
+    if (fileMetadata) return;
+
+    fileMetadata = new MMRFileMetadata(this);
+
+    fileMetadata->createToFileDirPath(storageBasePath);
+}
+//---------------------------------------------------------------------------
+void MMRServer::finalizeFileMetadata() {
+    if (!fileMetadata) return;
+
+    fileMetadata->finalizeWriting();
+    fileMetadata->close();
+
+    fileMetadata->deleteLater();
+    fileMetadata = NULL;
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
