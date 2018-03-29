@@ -12,7 +12,8 @@ HEADERS += \
     $$PWD/sources/shared/irqm/irqmconfigurator.h \
     $$PWD/sources/shared/irqm/irqmsqlitehelper.h \
     $$PWD/sources/shared/mmrwsdata.h \
-    $$PWD/sources/shared/mmrfiledata.h
+    $$PWD/sources/shared/mmrfiledata.h \
+    $$PWD/sources/shared/mmrfilemetadata.h
 
 SOURCES += \
     $$PWD/sources/shared/irqm/irqmfilehelper.cpp \
@@ -23,7 +24,8 @@ SOURCES += \
     $$PWD/sources/shared/irqm/irqmconfigurator.cpp \
     $$PWD/sources/shared/irqm/irqmsqlitehelper.cpp \
     $$PWD/sources/shared/mmrwsdata.cpp \
-    $$PWD/sources/shared/mmrfiledata.cpp
+    $$PWD/sources/shared/mmrfiledata.cpp \
+    $$PWD/sources/shared/mmrfilemetadata.cpp
 
 INCLUDEPATH += $$PWD/sources
 INCLUDEPATH += $$PWD/include/common
