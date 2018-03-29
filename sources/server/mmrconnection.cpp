@@ -128,6 +128,13 @@ void MMRConnection::handleRequestData(QString type, QVariantMap data) {
 
     IRQMSignalHandler::sendSignal("mmrconnection", "receivedData", identifier, dataByteArray.size());
 
+    MMRWSData wsData;
+    wsData.requestType = type;
+    wsData.dataType = "response";
+    wsData.data.insert("result", QString("ok"));
+
+    ws->sendBinaryMessage(wsData.toByteArray());
+
     /*
     if (this->type == "qtsensor") {
         QByteArray sensorData = data.value("data").toByteArray();
