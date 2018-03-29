@@ -2,6 +2,8 @@
 #define MMRCLIENT_H
 
 #include <QMap>
+#include <QMutex>
+#include <QMutexLocker>
 #include <QObject>
 #include <QRegularExpression>
 #include <QUuid>
@@ -23,6 +25,12 @@ public:
 
     QWebSocket *ws = NULL;
 
+    QMutex modalityDataMutex;
+    bool isWsReadyToReceiveModalityData = false;
+    bool hasPendingModalityData = false;
+    qint64 pendingModalityDataTimestamp;
+    QByteArray pendingModalityData;
+
     void log(QString text);
 
     void setConfiguration(QString key, QVariant value);
@@ -42,8 +50,10 @@ public:
 
     void handleResponse(MMRWSData *wsData);
     void handleResponseRegister(QString type, QVariantMap data);
+    void handleResponseData(QString type, QVariantMap data);
 
 private:
+    void sendPendingModalityData();
 
 signals:
 

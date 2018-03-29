@@ -30,6 +30,11 @@ void MMRClient::slotWsConnected() {
 void MMRClient::slotWsDisconnected() {
     this->log("ws: Disconnected");
 
+    {
+        QMutexLocker modalityDataMutexLocker(&modalityDataMutex);
+        isWsReadyToReceiveModalityData = false;
+    }
+
     IRQMSignalHandler::sendSignal("mmrclient", "serverDisconnected", identifier);
 }
 //---------------------------------------------------------------------------
@@ -53,13 +58,37 @@ void MMRClient::slotWsBinaryMessageReceived(QByteArray message) {
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
 void MMRClient::slotModalityAcquired(qint64 timestamp, QByteArray data) {
+
+    {
+        QMutexLocker modalityDataMutexLocker(&modalityDataMutex);
+
+        pendingModalityDataTimestamp = timestamp;
+        pendingModalityData = data;
+        hasPendingModalityData = true;
+    }
+
+    sendPendingModalityData();
+}
+//---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+void MMRClient::sendPendingModalityData() {
+
+    QMutexLocker modalityDataMutexLocker(&modalityDataMutex);
+
+    if (!isWsReadyToReceiveModalityData) return;
+    if (!hasPendingModalityData) return;
+
     MMRWSData wsData;
     wsData.requestType = "data";
     wsData.dataType = "request";
-    wsData.data.insert("timestamp", timestamp);
-    wsData.data.insert("data", data);
+    wsData.data.insert("timestamp", pendingModalityDataTimestamp);
+    wsData.data.insert("data", pendingModalityData);
 
     ws->sendBinaryMessage(wsData.toByteArray());
+
+    isWsReadyToReceiveModalityData = false;
+    hasPendingModalityData = false;
+    pendingModalityData = QByteArray();
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
@@ -146,6 +175,8 @@ void MMRClient::handleRequestStart(QString type, QVariantMap data) {
     if (!modality) return;
     this->log("Start acquisition");
 
+    isWsReadyToReceiveModalityData = true;
+    hasPendingModalityData = false;
     modality->startAcquisition();
 }
 //---------------------------------------------------------------------------
@@ -173,6 +204,7 @@ void MMRClient::handleResponse(MMRWSData *wsData) {
     QVariantMap data = wsData->data;
 
     if (type == "register") handleResponseRegister(type, data);
+    else if (type == "data") handleResponseData(type, data);
 
     wsData->deleteLater();
 }
@@ -184,6 +216,14 @@ void MMRClient::handleResponseRegister(QString type, QVariantMap data) {
     else {
         this->log("ws: Failed to register");
         disconnectServer();
+    }
+}
+//---------------------------------------------------------------------------
+void MMRClient::handleResponseData(QString type, QVariantMap data) {
+    if (data.value("result").toString() == "ok") {
+        QMutexLocker modalityDataMutexLocker(&modalityDataMutex);
+
+        isWsReadyToReceiveModalityData = true;
     }
 }
 //---------------------------------------------------------------------------
