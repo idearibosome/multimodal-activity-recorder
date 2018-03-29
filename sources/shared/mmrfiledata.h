@@ -36,6 +36,8 @@ public:
     void writeData(qint64 timestamp, QByteArray data);
     void finalizeWriting();
 
+    qint64 getCurrentFilePos();
+
 signals:
 
 public slots:
