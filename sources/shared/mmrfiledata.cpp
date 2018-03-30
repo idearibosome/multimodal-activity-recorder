@@ -47,7 +47,22 @@ void MMRFileData::loadFromFilePath(QString path) {
     if (fileDataStream) return;
 
     clear();
-    // TODO
+
+    QString filePath = QDir::cleanPath(path);
+
+    file = new QFile(filePath, this);
+    if (!file->open(QIODevice::ReadOnly)) {
+        file->deleteLater();
+        file = NULL;
+        return;
+    }
+
+    fileDataStream = new QDataStream(file);
+    fileDataStream->setVersion(QDataStream::Qt_5_9);
+
+    // read header
+    *fileDataStream >> headerMap;
+}
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
