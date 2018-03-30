@@ -63,6 +63,21 @@ void MMRFileData::loadFromFilePath(QString path) {
     // read header
     *fileDataStream >> headerMap;
 }
+//---------------------------------------------------------------------------
+QVariantMap MMRFileData::getData(qint64 filePos) {
+    if (!file || !fileDataStream) return QVariantMap();
+
+    qint64 timestamp = 0;
+    QByteArray data;
+
+    file->seek(filePos);
+    *fileDataStream >> timestamp >> data;
+
+    QVariantMap dataMap;
+    dataMap.insert("timestamp", timestamp);
+    dataMap.insert("data", data);
+
+    return dataMap;
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------

@@ -31,6 +31,7 @@ public:
     void setHeaderInfo(QString key, QVariant value);
 
     void loadFromFilePath(QString path);
+    QVariantMap getData(qint64 filePos);
 
     void prepareWritingToFilePath(QString path);
     void writeData(qint64 timestamp, QByteArray data);
