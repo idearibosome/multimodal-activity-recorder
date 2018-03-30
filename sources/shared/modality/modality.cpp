@@ -18,6 +18,27 @@ void Modality::reset() {
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
+QVariantMap Modality::parsedDataItemWithValue(QString name, QVariant value) {
+    QVariantMap itemMap;
+
+    itemMap.insert("name", name);
+    itemMap.insert("type", "value");
+    itemMap.insert("value", value);
+
+    return itemMap;
+}
+//---------------------------------------------------------------------------
+QVariantMap Modality::parsedDataItemWithImage(QString name, QImage image) {
+    QVariantMap itemMap;
+
+    itemMap.insert("name", name);
+    itemMap.insert("type", "image");
+    itemMap.insert("image", image);
+
+    return itemMap;
+}
+//---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
 void Modality::startRecordingAcquisitionTimestamp() {
     this->startAcquisitionTimestamp = QDateTime::currentMSecsSinceEpoch();
 }

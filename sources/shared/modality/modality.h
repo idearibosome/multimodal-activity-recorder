@@ -3,6 +3,7 @@
 
 #include <QDateTime>
 #include <QDebug>
+#include <QImage>
 #include <QObject>
 #include <QRegularExpression>
 #include <QUuid>
@@ -25,6 +26,10 @@ public:
 
     virtual bool startAcquisition() = 0;
     virtual void stopAcquisition() = 0;
+
+    virtual QVariantList parseData(QByteArray data) = 0;
+    static QVariantMap parsedDataItemWithValue(QString name, QVariant value);
+    static QVariantMap parsedDataItemWithImage(QString name, QImage image);
 
     void startRecordingAcquisitionTimestamp();
     qint64 getAcquisitionTimestamp();

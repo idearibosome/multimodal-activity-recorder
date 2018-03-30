@@ -23,6 +23,8 @@ public:
     bool startAcquisition() override;
     void stopAcquisition() override;
 
+    QVariantList parseData(QByteArray data) override;
+
     Q_INVOKABLE static QVariantList getAvailableSensors();
 
 private slots:

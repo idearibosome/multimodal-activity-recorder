@@ -129,6 +129,54 @@ void ModalityQtSensor::stopAcquisition() {
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
+QVariantList ModalityQtSensor::parseData(QByteArray data) {
+    QVariantList parsedDataList;
+
+    QDataStream inStream(&data, QIODevice::ReadOnly);
+    inStream.setVersion(QDataStream::Qt_5_9);
+
+    QString sensorType;
+    inStream >> sensorType;
+    parsedDataList.append(Modality::parsedDataItemWithValue("type", sensorType));
+
+    if (sensorType == "accelerometer") {
+        qreal x, y, z;
+        inStream >> x >> y >> z;
+        parsedDataList.append(Modality::parsedDataItemWithValue("x", x));
+        parsedDataList.append(Modality::parsedDataItemWithValue("y", y));
+        parsedDataList.append(Modality::parsedDataItemWithValue("z", z));
+    }
+    else if (sensorType == "compass") {
+        qreal azimuth, calibrationLevel;
+        inStream >> azimuth >> calibrationLevel;
+        parsedDataList.append(Modality::parsedDataItemWithValue("azimuth", azimuth));
+        parsedDataList.append(Modality::parsedDataItemWithValue("calibration_level", calibrationLevel));
+    }
+    else if (sensorType == "gyroscope") {
+        qreal x, y, z;
+        inStream >> x >> y >> z;
+        parsedDataList.append(Modality::parsedDataItemWithValue("x", x));
+        parsedDataList.append(Modality::parsedDataItemWithValue("y", y));
+        parsedDataList.append(Modality::parsedDataItemWithValue("z", z));
+    }
+    else if (sensorType == "lightsensor") {
+        qreal lux;
+        inStream >> lux;
+        parsedDataList.append(Modality::parsedDataItemWithValue("lux", lux));
+    }
+    else if (sensorType == "magnetometer") {
+        qreal calibrationLevel, x, y, z;
+        inStream >> calibrationLevel >> x >> y >> z;
+        parsedDataList.append(Modality::parsedDataItemWithValue("calibration_level", calibrationLevel));
+        parsedDataList.append(Modality::parsedDataItemWithValue("x", x));
+        parsedDataList.append(Modality::parsedDataItemWithValue("y", y));
+        parsedDataList.append(Modality::parsedDataItemWithValue("z", z));
+    }
+
+    return parsedDataList;
+}
+//---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
 QVariantList ModalityQtSensor::getAvailableSensors() {
     QVariantList sensorList;
     QList<QByteArray> sensorIdList;

@@ -236,5 +236,31 @@ void ModalityKinect::stopAcquisition() {
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
+QVariantList ModalityKinect::parseData(QByteArray data) {
+    QVariantList parsedDataList;
+
+    QDataStream inStream(&data, QIODevice::ReadOnly);
+    inStream.setVersion(QDataStream::Qt_5_9);
+
+    int colorFrameWidth, colorFrameHeight;
+    QByteArray colorData;
+
+    inStream >> colorFrameWidth >> colorFrameHeight >> colorData;
+
+    QImage colorImage = QImage((const uchar *)colorData.constData(), colorFrameWidth, colorFrameHeight, QImage::Format_RGB888).copy();
+    parsedDataList.append(Modality::parsedDataItemWithImage("color", colorImage));
+
+    int depthFrameWidth, depthFrameHeight;
+    QByteArray depthData;
+
+    inStream >> depthFrameWidth >> depthFrameHeight >> depthData;
+
+    QImage depthImage = QImage((const uchar *)depthData.constData(), depthFrameWidth, depthFrameHeight, QImage::Format_RGB16).copy();
+    parsedDataList.append(Modality::parsedDataItemWithImage("depth", depthImage));
+
+    return parsedDataList;
+}
+//---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
 
 #endif // MMR_MODALITY_KINECT
