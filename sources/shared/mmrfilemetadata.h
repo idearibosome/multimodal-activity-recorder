@@ -18,6 +18,8 @@ class MMRFileMetadata : public QObject
 public:
     explicit MMRFileMetadata(QObject *parent = nullptr);
 
+    QString basePath;
+
     sqlite3 *db = NULL;
     QMutex dbMutex;
 
@@ -29,6 +31,10 @@ public:
     void close();
 
     void loadFromFileDirPath(QString path);
+    void updateModalityIdentifierToIdxMap();
+    Q_INVOKABLE QVariantList getModalities();
+    Q_INVOKABLE qint64 getLength();
+    Q_INVOKABLE qint64 getModalityDataPos(QString identifier, qint64 timestamp);
 
     void createToFileDirPath(QString path);
     void addModality(QString type, QString identifier, QVariantMap configuration);

@@ -40,6 +40,8 @@ void MMRFileMetadata::close() {
 void MMRFileMetadata::loadFromFileDirPath(QString path) {
     if (db) return;
 
+    basePath = path;
+
     QString filePath = IRQMPathHelper::concatenate(path, MMR_FILE_METADATA_FILENAME);
 
     int rc = sqlite3_open_v2(filePath.toUtf8().constData(), &db, SQLITE_OPEN_READWRITE, NULL);
@@ -48,7 +50,80 @@ void MMRFileMetadata::loadFromFileDirPath(QString path) {
         return;
     }
 
-    // TODO
+    updateModalityIdentifierToIdxMap();
+}
+//---------------------------------------------------------------------------
+void MMRFileMetadata::updateModalityIdentifierToIdxMap() {
+    modalityIdentifierToIdxMap.clear();
+
+    QVariantList modalities = getModalities();
+    for (auto modalityVariant=modalities.begin(); modalityVariant!=modalities.end(); ++modalityVariant) {
+        QVariantMap modality = (*modalityVariant).toMap();
+
+        int modalityIdx = modality.value("modality_idx").toInt();
+        QString identifier = modality.value("identifier").toString();
+
+        modalityIdentifierToIdxMap.insert(identifier, modalityIdx);
+    }
+}
+//---------------------------------------------------------------------------
+QVariantList MMRFileMetadata::getModalities() {
+    if (!db) return QVariantList();
+
+    QVariantList modalities;
+
+    QString query = "SELECT * FROM modalities";
+    sqlite3_stmt *stmt = IRQMSQLiteHelper::prepare(db, query);
+
+    while (sqlite3_step(stmt) == SQLITE_ROW) {
+        QVariantMap row = IRQMSQLiteHelper::fetchRow(stmt);
+
+        modalities.append(row);
+    }
+
+    sqlite3_finalize(stmt);
+
+    return modalities;
+}
+//---------------------------------------------------------------------------
+qint64 MMRFileMetadata::getLength() {
+    if (!db) return 0;
+
+    qint64 timestamp = 0;
+
+    QString query = "SELECT timestamp FROM recordings ORDER BY timestamp DESC LIMIT 1";
+
+    sqlite3_stmt *stmt = IRQMSQLiteHelper::prepare(db, query);
+    if (sqlite3_step(stmt) == SQLITE_ROW) {
+        QVariantMap row = IRQMSQLiteHelper::fetchRow(stmt);
+        timestamp = row.value("timestamp").toLongLong();
+    }
+    sqlite3_finalize(stmt);
+
+    return timestamp;
+}
+//---------------------------------------------------------------------------
+qint64 MMRFileMetadata::getModalityDataPos(QString identifier, qint64 timestamp) {
+    if (!db) return -1;
+
+    if (!modalityIdentifierToIdxMap.contains(identifier)) return -1;
+    int modalityIdx = modalityIdentifierToIdxMap.value(identifier);
+
+    qint64 dataPos = 0;
+
+    QString query = "SELECT * FROM recordings WHERE modality_idx = ? AND timestamp <= ? ORDER BY timestamp DESC LIMIT 1";
+
+    sqlite3_stmt *stmt = IRQMSQLiteHelper::prepare(db, query);
+    IRQMSQLiteHelper::bindValue(stmt, 1, modalityIdx);
+    IRQMSQLiteHelper::bindValue(stmt, 2, timestamp);
+
+    if (sqlite3_step(stmt) == SQLITE_ROW) {
+        QVariantMap row = IRQMSQLiteHelper::fetchRow(stmt);
+        dataPos = row.value("data_pos").toLongLong();
+    }
+    sqlite3_finalize(stmt);
+
+    return dataPos;
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
