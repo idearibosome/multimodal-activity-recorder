@@ -19,6 +19,9 @@ Window {
     property var modalityViewList: ([])
     property string filePath
 
+    property bool isPlaying: false
+    property var playbackLastFetchedTimestamp: -1
+
     Component.onCompleted: {
         IRQM.SignalHandler.bindSignal("main", "dataLoaded", this, "slotDataLoaded");
     }
@@ -57,8 +60,26 @@ Window {
     Component {
         id: modalityComponent
 
-        Modality {
+        Modality {}
+    }
 
+    Timer {
+        id: playbackTimer
+        interval: 100
+        repeat: true
+        running: container.isPlaying
+
+        onTriggered: {
+            var timestamp = qMain.getCurrentTimestamp();
+            var elapsed = (container.playbackLastFetchedTimestamp >= 0 ? timestamp - container.playbackLastFetchedTimestamp : 0);
+            var newPos = Math.min(timestampSlider.maximumValue, timestampSlider.value + elapsed);
+
+            container.playbackLastFetchedTimestamp = timestamp;
+            timestampSlider.value = newPos;
+
+            if (newPos >= timestampSlider.maximumValue) {
+                container.isPlaying = false;
+            }
         }
     }
 
@@ -154,14 +175,33 @@ Window {
                 }
             }
             Button {
-                Layout.preferredWidth: 48
+                id: playButton
+                Layout.preferredWidth: 60
+                text: "Play"
+                visible: !(container.isPlaying)
+                onClicked: {
+                    container.playbackLastFetchedTimestamp = -1;
+                    container.isPlaying = true;
+                }
+            }
+            Button {
+                id: pauseButton
+                Layout.preferredWidth: 60
+                text: "Pause"
+                visible: container.isPlaying
+                onClicked: {
+                    container.isPlaying = false;
+                }
+            }
+            Button {
+                Layout.preferredWidth: 40
                 text: "<"
                 onClicked: {
                     timestampSlider.value = Math.max(timestampSlider.value-100, 0);
                 }
             }
             Button {
-                Layout.preferredWidth: 48
+                Layout.preferredWidth: 40
                 text: ">"
                 onClicked: {
                     timestampSlider.value = Math.min(timestampSlider.value+100, timestampSlider.maximumValue);
@@ -180,7 +220,12 @@ Window {
                 }
 
                 onValueChanged: {
-                    timestampSliderTimer.start();
+                    if (playbackTimer.running) {
+                        valueChangeEvent();
+                    }
+                    else {
+                        timestampSliderTimer.start();
+                    }
                 }
 
                 Timer {

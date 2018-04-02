@@ -1,6 +1,7 @@
 #ifndef QUICKMAIN_H
 #define QUICKMAIN_H
 
+#include <QDateTime>
 #include <QMutex>
 #include <QMutexLocker>
 #include <QObject>
@@ -43,6 +44,8 @@ public:
     Q_INVOKABLE int getNumObjects();
     Q_INVOKABLE MMRObject *getObjectAt(int index);
     Q_INVOKABLE void loadObjectData(qint64 timestamp);
+
+    Q_INVOKABLE qint64 getCurrentTimestamp();
 
 private:
     void createMMRObjects();
