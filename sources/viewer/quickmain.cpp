@@ -49,10 +49,14 @@ void QuickMain::loadMMRData(QString basePath) {
 }
 //---------------------------------------------------------------------------
 void QuickMain::unloadMMRData() {
+    destroyMMRObjects();
+
     if (fileMetadata) {
         fileMetadata->deleteLater();
         fileMetadata = NULL;
     }
+
+    IRQMSignalHandler::sendSignal("main", "dataUnloaded");
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
@@ -96,6 +100,20 @@ void QuickMain::createMMRObjects() {
         object->loadFileData(fileMetadata->basePath);
 
         objectList.append(object);
+    }
+}
+//---------------------------------------------------------------------------
+void QuickMain::destroyMMRObjects() {
+    while (objectList.count() > 0) {
+        MMRObject *object = objectList.takeLast();
+        object->clear();
+        object->deleteLater();
+    }
+
+    if (fileMetadata) {
+        fileMetadata->clear();
+        fileMetadata->deleteLater();
+        fileMetadata = NULL;
     }
 }
 //---------------------------------------------------------------------------

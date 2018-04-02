@@ -49,6 +49,7 @@ public:
 
 private:
     void createMMRObjects();
+    void destroyMMRObjects();
 
 signals:
 

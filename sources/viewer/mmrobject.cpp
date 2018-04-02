@@ -13,6 +13,23 @@ MMRObject::MMRObject(QObject *parent) : QObject(parent) {
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
+void MMRObject::clear() {
+    if (fileData) {
+        fileData->clear();
+        fileData->deleteLater();
+        fileData = NULL;
+    }
+    if (modality) {
+        modality->deleteLater();
+        modality = NULL;
+    }
+
+    loadedData.clear();
+    loadedImageData.clear();
+    loadedDataPos = -1;
+}
+//---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
 void MMRObject::setModalityInfo(QVariantMap info) {
     identifier = info.value("identifier").toString();
 

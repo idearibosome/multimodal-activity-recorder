@@ -23,6 +23,8 @@ public:
     QVariantList loadedData;
     QMap<QString, QImage> loadedImageData;
 
+    void clear();
+
     void setModalityInfo(QVariantMap info);
     void loadFileData(QString basePath);
 

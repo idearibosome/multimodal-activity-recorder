@@ -24,6 +24,7 @@ Window {
 
     Component.onCompleted: {
         IRQM.SignalHandler.bindSignal("main", "dataLoaded", this, "slotDataLoaded");
+        IRQM.SignalHandler.bindSignal("main", "dataUnloaded", this, "slotDataUnloaded");
     }
 
     Component.onDestruction: {
@@ -44,6 +45,20 @@ Window {
 
             modalityViewList.push(modalityView);
         }
+    }
+    //---------------------------------------------------------------------------
+    function slotDataUnloaded() {
+        container.numObjects = 0;
+
+        while (modalityViewList.length > 0) {
+            var modalityView = modalityViewList.pop();
+            modalityView.parent = null;
+            modalityView.destroy();
+            modalityView = null;
+        }
+
+        timestampSlider.maximumValue = 0.0;
+        timestampSlider.value = 0.0;
     }
     //---------------------------------------------------------------------------
     //---------------------------------------------------------------------------
