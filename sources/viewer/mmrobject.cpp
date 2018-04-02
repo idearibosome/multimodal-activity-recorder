@@ -44,7 +44,8 @@ void MMRObject::loadFileData(QString basePath) {
     QString filePath = basePath + QDir::separator() + modality->type + "_" + modality->identifier + ".mmr";
     filePath = QDir::cleanPath(filePath);
 
-    fileData = MMRFileData::fromFilePath(filePath);
+    fileData = new MMRFileData(this);
+    fileData->loadFromFilePath(filePath);
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------

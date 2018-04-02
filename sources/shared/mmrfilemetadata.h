@@ -25,8 +25,6 @@ public:
 
     QMap<QString, int> modalityIdentifierToIdxMap;
 
-    static MMRFileMetadata *fromFileDirPath(QString path);
-
     void clear();
     void close();
 

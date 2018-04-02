@@ -11,15 +11,6 @@ MMRFileMetadata::MMRFileMetadata(QObject *parent) : QObject(parent) {
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
-MMRFileMetadata *MMRFileMetadata::fromFileDirPath(QString path) {
-    MMRFileMetadata *fileMetadata = new MMRFileMetadata();
-
-    fileMetadata->loadFromFileDirPath(path);
-
-    return fileMetadata;
-}
-//---------------------------------------------------------------------------
-//---------------------------------------------------------------------------
 void MMRFileMetadata::clear() {
     close();
 

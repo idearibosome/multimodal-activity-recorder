@@ -40,7 +40,8 @@ QuickMain::QuickMain(QObject *parent) : QObject(parent) {
 void QuickMain::loadMMRData(QString basePath) {
     unloadMMRData();
 
-    fileMetadata = MMRFileMetadata::fromFileDirPath(basePath);
+    fileMetadata = new MMRFileMetadata(this);
+    fileMetadata->loadFromFileDirPath(basePath);
 
     createMMRObjects();
 

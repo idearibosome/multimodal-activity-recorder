@@ -6,15 +6,6 @@ MMRFileData::MMRFileData(QObject *parent) : QObject(parent) {
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
-MMRFileData *MMRFileData::fromFilePath(QString path) {
-    MMRFileData *fileData = new MMRFileData();
-
-    fileData->loadFromFilePath(path);
-
-    return fileData;
-}
-//---------------------------------------------------------------------------
-//---------------------------------------------------------------------------
 void MMRFileData::clear() {
     close();
 

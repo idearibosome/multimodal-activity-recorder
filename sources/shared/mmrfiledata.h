@@ -22,8 +22,6 @@ public:
 
     QVariantMap headerMap;
 
-    static MMRFileData *fromFilePath(QString path);
-
     void clear();
     void close();
 
