@@ -47,6 +47,8 @@ public:
 
     Q_INVOKABLE qint64 getCurrentTimestamp();
 
+    Q_INVOKABLE void writeBlobData();
+
 private:
     void createMMRObjects();
     void destroyMMRObjects();

@@ -224,3 +224,79 @@ void MMRFileMetadata::initializeTables() {
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
+void MMRFileMetadata::prepareWritingBlobData() {
+    if (!db) return;
+
+    QString queryString;
+
+    queryString = "CREATE TABLE IF NOT EXISTS data ( "
+            "modality_idx INTEGER PRIMARY KEY AUTOINCREMENT, "
+            "recording_idx INTEGER, "
+            "type TEXT, "
+            "data BLOB "
+            ")";
+    sqlite3_exec(db, queryString.toUtf8().constData(), 0, 0, NULL);
+}
+//---------------------------------------------------------------------------
+QVariantList MMRFileMetadata::getModalityRecordings(QString identifier) {
+    if (!db) return QVariantList();
+
+    if (!modalityIdentifierToIdxMap.contains(identifier)) return QVariantList();
+    int modalityIdx = modalityIdentifierToIdxMap.value(identifier);
+
+    QVariantList recordings;
+
+    QString query = "SELECT * FROM recordings WHERE modality_idx = ? ORDER BY timestamp ASC";
+    sqlite3_stmt *stmt = IRQMSQLiteHelper::prepare(db, query);
+    IRQMSQLiteHelper::bindValue(stmt, 1, modalityIdx);
+
+    while (sqlite3_step(stmt) == SQLITE_ROW) {
+        QVariantMap row = IRQMSQLiteHelper::fetchRow(stmt);
+
+        recordings.append(row);
+    }
+
+    sqlite3_finalize(stmt);
+
+    return recordings;
+}
+//---------------------------------------------------------------------------
+void MMRFileMetadata::beginWriteBlobDataTransaction() {
+    if (!db) return;
+
+    // sqlite3
+    {
+        QMutexLocker dbMutexLocker(&dbMutex);
+        sqlite3_exec(db, "BEGIN TRANSACTION", 0, 0, NULL);
+    }
+}
+//---------------------------------------------------------------------------
+void MMRFileMetadata::commitWriteBlobDataTransaction() {
+    if (!db) return;
+
+    // sqlite3
+    {
+        QMutexLocker dbMutexLocker(&dbMutex);
+        sqlite3_exec(db, "COMMIT", 0, 0, NULL);
+    }
+}
+//---------------------------------------------------------------------------
+void MMRFileMetadata::writeBlobData(int recordingIdx, QString type, QByteArray data) {
+    if (!db) return;
+
+    // sqlite3
+    {
+        QMutexLocker dbMutexLocker(&dbMutex);
+
+        QString query = "INSERT INTO data (recording_idx, type, data) VALUES (?, ?, ?)";
+        sqlite3_stmt *stmt = IRQMSQLiteHelper::prepare(db, query);
+        IRQMSQLiteHelper::bindValue(stmt, 1, recordingIdx);
+        IRQMSQLiteHelper::bindValue(stmt, 2, type);
+        IRQMSQLiteHelper::bindValue(stmt, 3, data);
+
+        sqlite3_step(stmt);
+        sqlite3_finalize(stmt);
+    }
+}
+//---------------------------------------------------------------------------
+//---------------------------------------------------------------------------

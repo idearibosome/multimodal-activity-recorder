@@ -3,6 +3,7 @@
 #include "mmrobject.h"
 
 #include "../shared/irqm/irqmsignalhandler.h"
+#include "../shared/irqm/irqmjsonhelper.h"
 
 #include "../shared/mmrfilemetadata.h"
 
@@ -120,6 +121,61 @@ void QuickMain::destroyMMRObjects() {
 //---------------------------------------------------------------------------
 qint64 QuickMain::getCurrentTimestamp() {
     return QDateTime::currentMSecsSinceEpoch();
+}
+//---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+void QuickMain::writeBlobData() {
+    if (!fileMetadata) return;
+
+    fileMetadata->prepareWritingBlobData();
+
+    for (auto object=objectList.begin(); object!=objectList.end(); ++object) {
+        QString identifier = (*object)->identifier;
+        QString modalityType = (*object)->modality->type;
+
+        QVariantList recordings = fileMetadata->getModalityRecordings(identifier);
+
+        fileMetadata->beginWriteBlobDataTransaction();
+
+        for (int i=0; i<recordings.count(); i++) {
+            qDebug() << identifier << i << recordings.count();
+            QVariantMap recording = recordings.at(i).toMap();
+
+            int recordingIdx = recording.value("recording_idx").toInt();
+            qint64 dataPos = recording.value("data_pos").toLongLong();
+
+            (*object)->loadModalityData(dataPos);
+
+            if (modalityType == "kinect") {
+                QImage colorImage = (*object)->getModalityImageData("color");
+                colorImage = colorImage.scaledToHeight(360);
+                QByteArray colorByteArray;
+                QBuffer colorBuffer(&colorByteArray);
+                colorBuffer.open(QIODevice::WriteOnly);
+                colorImage.save(&colorBuffer, "PNG");
+                fileMetadata->writeBlobData(recordingIdx, "color", colorByteArray);
+
+                QImage depthImage = (*object)->getModalityImageData("depth");
+                QByteArray depthByteArray;
+                QBuffer depthBuffer(&depthByteArray);
+                depthBuffer.open(QIODevice::WriteOnly);
+                depthImage.save(&depthBuffer, "PNG");
+                fileMetadata->writeBlobData(recordingIdx, "depth", depthByteArray);
+            }
+            else if (modalityType == "qtsensor") {
+                QString dataType = (*object)->loadedData.at(0).toMap().value("value").toString();
+
+                QVariantList dataList;
+                for (int j=1; j<(*object)->loadedData.count(); j++) {
+                    dataList.append((*object)->loadedData.at(j).toMap().value("value"));
+                }
+                QByteArray data = IRQMJSONHelper::JSONObjectToByteArray(dataList);
+                fileMetadata->writeBlobData(recordingIdx, dataType, data);
+            }
+        }
+
+        fileMetadata->commitWriteBlobDataTransaction();
+    }
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------

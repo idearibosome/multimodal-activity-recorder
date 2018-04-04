@@ -140,7 +140,13 @@ Window {
                     }
                 }
             }
-
+            Button {
+                id: writeBlobButton
+                text: "Write"
+                onClicked: {
+                    qMain.writeBlobData();
+                }
+            }
         }
         Rectangle {
             Layout.fillWidth: true

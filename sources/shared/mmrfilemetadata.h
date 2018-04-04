@@ -39,6 +39,12 @@ public:
     void addRecording(QString identifier, qint64 dataPos, qint64 timestamp);
     void finalizeWriting();
 
+    void prepareWritingBlobData();
+    QVariantList getModalityRecordings(QString identifier);
+    void beginWriteBlobDataTransaction();
+    void commitWriteBlobDataTransaction();
+    void writeBlobData(int recordingIdx, QString type, QByteArray data);
+
 
 private:
     void initializeTables();
