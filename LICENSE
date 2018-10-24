@@ -13,15 +13,14 @@ OEMs, ISVs and VARs) and open source projects.
 For OEMs. ISVs, VARs and Other Distributors of Commercial Applications:
 OEMs (Original Equipment Manufacturers), ISVs (Independent Software Vendors), 
 VARs (Value Added Resellers) and other distributors that combine and distribute 
-commercially licensed software with Name_of_Software software and do not wish 
-to distribute the source code for the commercially licensed software under the 
-LGPLv3 must enter into a commercial license agreement with MCML Group.
+commercially licensed software with this software and do not wish to distribute 
+the source code for the commercially licensed software under the LGPLv3 must 
+enter into a commercial license agreement with MCML Group.
 
 For Open Source Projects and Other Developers of Open Source Applications:
 For developers of Free Open Source Software ("FOSS") applications that want to 
-combine and distribute those FOSS applications with Name_of_Software software, 
-
-The FOSS applications must be licensed under the LGPLv3. 
+combine and distribute those FOSS applications with this software, the FOSS 
+applications must be licensed under the LGPLv3. 
 
 For more information, please contact us with the information below.
 Jun-Ho Choi
