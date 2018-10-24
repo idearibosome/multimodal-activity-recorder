@@ -32,7 +32,7 @@ This repository contains codes that enable retrieving human activity recognition
 
 ## License
 
-TBD
+LGPLv3 with additional regulations. Please refer to the LICENSE file for more information.
 
 
 ## Acknowledgement
