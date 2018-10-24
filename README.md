@@ -1,6 +1,6 @@
-# MultiModalRecorder
+# Multimodal Recorder for Activity Recognition
 
-MultiModalRecorder enables retrieving human activity recognition data from multiple sensors simultaneously.
+This repository contains codes that enable retrieving human activity recognition data from multiple sensors simultaneously.
 
 
 ## Supported platforms
