@@ -20,6 +20,7 @@ Window {
     property string filePath
 
     property bool isPlaying: false
+    property alias loopPlay: repeatCheckBox.checked
     property var playbackLastFetchedTimestamp: -1
 
     Component.onCompleted: {
@@ -89,12 +90,17 @@ Window {
             var elapsed = (container.playbackLastFetchedTimestamp >= 0 ? timestamp - container.playbackLastFetchedTimestamp : 0);
             var newPos = Math.min(timestampSlider.maximumValue, timestampSlider.value + elapsed);
 
+            if (newPos >= timestampSlider.maximumValue) {
+                if (container.loopPlay) {
+                    newPos = 0;
+                }
+                else {
+                    container.isPlaying = false;
+                }
+            }
+
             container.playbackLastFetchedTimestamp = timestamp;
             timestampSlider.value = newPos;
-
-            if (newPos >= timestampSlider.maximumValue) {
-                container.isPlaying = false;
-            }
         }
     }
 
@@ -207,6 +213,10 @@ Window {
                 onClicked: {
                     container.isPlaying = false;
                 }
+            }
+            CheckBox {
+                id: repeatCheckBox
+                text: "Repeat"
             }
             Button {
                 Layout.preferredWidth: 40
