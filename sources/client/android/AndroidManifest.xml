@@ -17,9 +17,9 @@
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     
-    <application android:hardwareAccelerated="true" android:name="org.qtproject.qt5.android.bindings.QtApplication" android:label="-- %%INSERT_APP_NAME%% --">
+    <application android:hardwareAccelerated="true" android:name=".MainApplication" android:label="-- %%INSERT_APP_NAME%% --">
         <activity android:configChanges="orientation|uiMode|screenLayout|screenSize|smallestScreenSize|layoutDirection|locale|fontScale|keyboard|keyboardHidden|navigation"
-                  android:name="org.qtproject.qt5.android.bindings.QtActivity"
+                  android:name=".MainActivity"
                   android:label="-- %%INSERT_APP_NAME%% --"
                   android:screenOrientation="unspecified"
                   android:launchMode="singleTop">
@@ -81,6 +81,7 @@
     </activity>
 
     <!-- For adding service(s) please check: https://wiki.qt.io/AndroidServices -->
+    <service android:name=".AndroidService" />
 
     </application>
 
