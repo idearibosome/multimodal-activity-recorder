@@ -39,6 +39,7 @@ public class MainActivity extends QtActivity {
     super.onCreate(savedInstanceState);
     fullDestroy = true;
 
+    requestEssentialPermissions();
     createService();
   }
     
@@ -80,5 +81,15 @@ public class MainActivity extends QtActivity {
 
     startService(new Intent(this, AndroidService.class));
     bindService(new Intent(this, AndroidService.class), mainApplication.AndroidServiceConnection, Context.BIND_AUTO_CREATE);
+  }
+
+  public void requestEssentialPermissions() {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+      return;
+    }
+
+    if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+      requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 0);
+    }
   }
 }
