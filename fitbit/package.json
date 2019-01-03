@@ -1,0 +1,26 @@
+{
+  "fitbit": {
+    "appUUID": "0cfa4585-9848-4bd3-919b-726382cafe37",
+    "appType": "app",
+    "appDisplayName": "Multimodal Recorder",
+    "iconFile": "resources/icon.png",
+    "wipeColor": "#607d8b",
+    "requestedPermissions": [
+      "access_heart_rate",
+      "access_activity",
+      "access_internet"
+    ],
+    "buildTargets": [
+      "higgs",
+      "meson"
+    ],
+    "i18n": {
+      "en": {
+        "name": "Multimodal Recorder"
+      }
+    }
+  },
+  "devDependencies": {
+    "@fitbit/sdk": "~3.0.0"
+  }
+}
