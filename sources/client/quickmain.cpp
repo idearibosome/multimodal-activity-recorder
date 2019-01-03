@@ -6,6 +6,7 @@
 #include "../shared/modality/modalitykinect.h"
 #include "../shared/modality/modalityqtsensor.h"
 #include "../shared/modality/modalitybitalino.h"
+#include "../shared/modality/modalityfitbit.h"
 
 QuickMain *qMain;
 //---------------------------------------------------------------------------
@@ -42,6 +43,14 @@ QVariantList QuickMain::getAvailableModalities() {
         modalities.append(modality);
     }
 #endif
+#if defined(MMR_MODALITY_FITBIT)
+    {
+        QVariantMap modality;
+        modality.insert("type", "fitbit");
+        modality.insert("text", "Fitbit");
+        modalities.append(modality);
+    }
+#endif
 
     return modalities;
 }
@@ -65,6 +74,11 @@ QString QuickMain::createClient(QVariantMap modality) {
 #if defined(MMR_MODALITY_BITALINO)
     if (type == "bitalino") {
         client->registerModality(new ModalityBITalino());
+    }
+#endif
+#if defined(MMR_MODALITY_FITBIT)
+    if (type == "fitbit") {
+        client->registerModality(new ModalityFitbit());
     }
 #endif
 

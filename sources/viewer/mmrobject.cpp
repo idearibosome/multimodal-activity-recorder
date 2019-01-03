@@ -4,6 +4,7 @@
 #include "../shared/modality/modalitykinect.h"
 #include "../shared/modality/modalityqtsensor.h"
 #include "../shared/modality/modalitybitalino.h"
+#include "../shared/modality/modalityfitbit.h"
 
 #include "../shared/mmrfiledata.h"
 //---------------------------------------------------------------------------
@@ -48,6 +49,11 @@ void MMRObject::setModalityInfo(QVariantMap info) {
 #if defined(MMR_MODALITY_BITALINO)
     if (type == "bitalino") {
         modality = new ModalityBITalino(this);
+    }
+#endif
+#if defined(MMR_MODALITY_FITBIT)
+    if (type == "fitbit") {
+        modality = new ModalityFitbit(this);
     }
 #endif
 

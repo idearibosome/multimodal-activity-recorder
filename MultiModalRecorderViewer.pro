@@ -76,6 +76,7 @@ win32 {
 MMRModalities += kinect
 MMRModalities += qtsensor
 MMRModalities += bitalino
+MMRModalities += fitbit
 include(modalities.pri)
 
 

@@ -45,3 +45,12 @@ contains(MMRModalities, "bitalino") {
         DEFINES += MMR_MODALITY_BITALINO
     }
 }
+
+
+# Fitbit
+contains(MMRModalities, "fitbit") {
+    HEADERS += $$PWD/sources/shared/modality/modalityfitbit.h
+    SOURCES += $$PWD/sources/shared/modality/modalityfitbit.cpp
+
+    DEFINES += MMR_MODALITY_FITBIT
+}
