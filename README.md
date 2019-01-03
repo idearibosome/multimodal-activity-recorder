@@ -7,9 +7,9 @@ This repository contains codes that enable retrieving human activity recognition
 
 - Windows 7+ (x86/x64)
 - ~~macOS 10.10+~~
-  - Currently, the SQLite library is missing.
+  - Currently, the SQLite and QHttp libraries are missing.
 - ~~iOS 10.0+~~
-  - Currently, the SQLite library is missing.
+  - Currently, the SQLite and QHttp libraries are missing.
 - Android 5.0+ (API Level 21+)
 
 
@@ -22,6 +22,7 @@ This repository contains codes that enable retrieving human activity recognition
   - Magnetometer
 - Kinect v2 (Windows)
 - BITalino BLE (macOS/iOS/Android)
+- Fitbit Versa/Ionic (Windows/macOS/iOS/Android)
 
 
 ## Dependencies
