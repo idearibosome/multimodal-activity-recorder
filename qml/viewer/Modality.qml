@@ -82,6 +82,7 @@ ColumnLayout {
 
             Rectangle {
                 Layout.fillWidth: true
+                Layout.minimumWidth: 60
                 Layout.preferredHeight: 20
                 color: "#f8f8f8"
 
