@@ -40,17 +40,20 @@ win32:contains(QMAKE_HOST.arch, x86_64) {
   equals(ANDROID_TARGET_ARCH, armeabi-v7a) {
     LIBS += -L$$PWD/lib/android/armeabi-v7a
     ANDROID_EXTRA_LIBS += \
-      $$PWD/lib/android/armeabi-v7a/libsqlite3.so
+      $$PWD/lib/android/armeabi-v7a/libsqlite3.so \
+      $$PWD/lib/android/armeabi-v7a/libqhttp.so
   }
   equals(ANDROID_TARGET_ARCH, x86) {
     LIBS += -L$$PWD/lib/android/x86
     ANDROID_EXTRA_LIBS += \
-      $$PWD/lib/android/x86/libsqlite3.so
+      $$PWD/lib/android/x86/libsqlite3.so \
+      $$PWD/lib/android/x86/libqhttp.so
   }
 } else:ios {
 }
 
 # common libraries
 LIBS += -lsqlite3
+LIBS += -lqhttp
 
 
