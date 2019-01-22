@@ -20,6 +20,9 @@ bool ModalityQtSensor::initialize(QVariantMap configuration) {
     if (sensorType == "accelerometer") {
         sensor = new QAccelerometer(this);
     }
+    else if (sensorType == "ambient_temperature") {
+        sensor = new QAmbientTemperatureSensor(this);
+    }
     else if (sensorType == "compass") {
         sensor = new QCompass(this);
     }
@@ -31,6 +34,12 @@ bool ModalityQtSensor::initialize(QVariantMap configuration) {
     }
     else if (sensorType == "magnetometer") {
         sensor = new QMagnetometer(this);
+    }
+    else if (sensorType == "pressure") {
+        sensor = new QPressureSensor(this);
+    }
+    else if (sensorType == "proximity") {
+        sensor = new QProximitySensor(this);
     }
     else {
         return false;
@@ -74,6 +83,13 @@ void ModalityQtSensor::slotSensorReadingChanged() {
             isDataAcquired = true;
         }
     }
+    else if (sensorType == "ambient_temperature") {
+        QAmbientTemperatureReading *reading = ((QAmbientTemperatureSensor *)sensor)->reading();
+        if (reading) {
+            outStream << reading->temperature();
+            isDataAcquired = true;
+        }
+    }
     else if (sensorType == "compass") {
         QCompassReading *reading = ((QCompass *)sensor)->reading();
         if (reading) {
@@ -105,6 +121,20 @@ void ModalityQtSensor::slotSensorReadingChanged() {
             outStream << reading->x();
             outStream << reading->y();
             outStream << reading->z();
+            isDataAcquired = true;
+        }
+    }
+    else if (sensorType == "pressure") {
+        QPressureReading *reading = ((QPressureSensor *)sensor)->reading();
+        if (reading) {
+            outStream << reading->pressure();
+            isDataAcquired = true;
+        }
+    }
+    else if (sensorType == "proximity") {
+        QProximityReading *reading = ((QProximitySensor *)sensor)->reading();
+        if (reading) {
+            outStream << reading->close();
             isDataAcquired = true;
         }
     }
@@ -146,6 +176,11 @@ QVariantList ModalityQtSensor::parseData(QByteArray data) {
         parsedDataList.append(Modality::parsedDataItemWithValue("y", y));
         parsedDataList.append(Modality::parsedDataItemWithValue("z", z));
     }
+    else if (sensorType == "ambient_temperature") {
+        qreal temperature;
+        inStream >> temperature;
+        parsedDataList.append(Modality::parsedDataItemWithValue("temperature", temperature));
+    }
     else if (sensorType == "compass") {
         qreal azimuth, calibrationLevel;
         inStream >> azimuth >> calibrationLevel;
@@ -172,6 +207,16 @@ QVariantList ModalityQtSensor::parseData(QByteArray data) {
         parsedDataList.append(Modality::parsedDataItemWithValue("y", y));
         parsedDataList.append(Modality::parsedDataItemWithValue("z", z));
     }
+    else if (sensorType == "pressure") {
+        qreal pressure;
+        inStream >> pressure;
+        parsedDataList.append(Modality::parsedDataItemWithValue("pressure", pressure));
+    }
+    else if (sensorType == "proximity") {
+        bool close;
+        inStream >> close;
+        parsedDataList.append(Modality::parsedDataItemWithValue("close", close));
+    }
 
     return parsedDataList;
 }
@@ -186,6 +231,16 @@ QVariantList ModalityQtSensor::getAvailableSensors() {
         QVariantMap sensorMap;
         sensorMap.insert("type", "accelerometer");
         sensorMap.insert("text", "Accelerometer");
+        sensorMap.insert("identifier", sensorId);
+
+        sensorList.append(sensorMap);
+    }
+
+    sensorIdList = QSensor::sensorsForType(QAmbientTemperatureSensor::type);
+    foreach (QByteArray sensorId, sensorIdList) {
+        QVariantMap sensorMap;
+        sensorMap.insert("type", "ambient_temperature");
+        sensorMap.insert("text", "Ambient Temperature");
         sensorMap.insert("identifier", sensorId);
 
         sensorList.append(sensorMap);
@@ -226,6 +281,26 @@ QVariantList ModalityQtSensor::getAvailableSensors() {
         QVariantMap sensorMap;
         sensorMap.insert("type", "magnetometer");
         sensorMap.insert("text", "Magnetometer");
+        sensorMap.insert("identifier", sensorId);
+
+        sensorList.append(sensorMap);
+    }
+
+    sensorIdList = QSensor::sensorsForType(QPressureSensor::type);
+    foreach (QByteArray sensorId, sensorIdList) {
+        QVariantMap sensorMap;
+        sensorMap.insert("type", "pressure");
+        sensorMap.insert("text", "Pressure");
+        sensorMap.insert("identifier", sensorId);
+
+        sensorList.append(sensorMap);
+    }
+
+    sensorIdList = QSensor::sensorsForType(QProximitySensor::type);
+    foreach (QByteArray sensorId, sensorIdList) {
+        QVariantMap sensorMap;
+        sensorMap.insert("type", "proximity");
+        sensorMap.insert("text", "Proximity");
         sensorMap.insert("identifier", sensorId);
 
         sensorList.append(sensorMap);
