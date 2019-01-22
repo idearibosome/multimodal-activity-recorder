@@ -15,11 +15,14 @@ This repository contains codes that enable retrieving human activity recognition
 
 ## Supported sensors
 
-- Hardware-integrated sensors (iOS/Android)
-  - Accelerometer
-  - Gyroscope
-  - Light sensor
-  - Magnetometer
+- Hardware-integrated sensors
+  - Accelerometer (Android/iOS)
+  - Ambient temperature (Android)
+  - Gyroscope (Android/iOS)
+  - Light sensor (Android)
+  - Magnetometer (Android/iOS)
+  - Pressure (Android)
+  - Proximity (Android/iOS)
 - Kinect v2 (Windows)
 - BITalino BLE (macOS/iOS/Android)
 - Fitbit Versa/Ionic (Windows/macOS/iOS/Android)
