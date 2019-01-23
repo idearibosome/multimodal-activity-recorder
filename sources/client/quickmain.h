@@ -15,6 +15,8 @@ public:
 
     QMap<QString, MMRClient *> clientList;
 
+    QString lastConnectedServerUrl;
+
     Q_INVOKABLE QVariantList getAvailableModalities();
 
     Q_INVOKABLE QString createClient(QVariantMap modality);
@@ -25,6 +27,8 @@ public:
     Q_INVOKABLE void clientSetConfiguration(QString identifier, QString key, QVariant value);
     Q_INVOKABLE void clientConnectServer(QString identifier, QString url);
     Q_INVOKABLE void clientDisconnectServer(QString identifier);
+
+    Q_INVOKABLE QString getLastConnectedServerUrl();
 
 signals:
 

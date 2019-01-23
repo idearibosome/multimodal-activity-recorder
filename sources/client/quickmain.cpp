@@ -12,7 +12,7 @@ QuickMain *qMain;
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
 QuickMain::QuickMain(QObject *parent) : QObject(parent) {
-
+    lastConnectedServerUrl = "";
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
@@ -121,6 +121,7 @@ void QuickMain::clientConnectServer(QString identifier, QString url) {
     if (!client) return;
 
     client->connectServer(url);
+    lastConnectedServerUrl = url;
 }
 //---------------------------------------------------------------------------
 void QuickMain::clientDisconnectServer(QString identifier) {
@@ -128,6 +129,11 @@ void QuickMain::clientDisconnectServer(QString identifier) {
     if (!client) return;
 
     client->disconnectServer();
+}
+//---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+QString QuickMain::getLastConnectedServerUrl() {
+    return lastConnectedServerUrl;
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------

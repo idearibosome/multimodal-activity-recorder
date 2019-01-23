@@ -123,7 +123,11 @@ Item {
                     TextField {
                         id: serverAddressTextField
                         Layout.fillWidth: true
-                        text: "ws://"
+                        text: {
+                            var url = qMain.getLastConnectedServerUrl();
+                            if (url) return url;
+                            return "ws://";
+                        }
                     }
                     Button {
                         id: connectButton
