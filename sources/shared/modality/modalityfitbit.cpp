@@ -18,8 +18,6 @@ bool ModalityFitbit::initialize(QVariantMap configuration) {
 }
 //---------------------------------------------------------------------------
 void ModalityFitbit::reset() {
-    stopServer();
-
     Modality::reset();
 }
 //---------------------------------------------------------------------------
