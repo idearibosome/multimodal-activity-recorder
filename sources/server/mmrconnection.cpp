@@ -8,7 +8,8 @@
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
 MMRConnection::MMRConnection(QObject *parent) : QObject(parent) {
-    identifier = "unknown";
+    type = "";
+    identifier = "";
 }
 //---------------------------------------------------------------------------
 //--------------------------------------------------------------------------
@@ -22,6 +23,11 @@ void MMRConnection::slotWsBinaryMessageReceived(QByteArray message) {
 }
 //---------------------------------------------------------------------------
 void MMRConnection::slotWsDisconnected() {
+    if (this->type != "") {
+        log("disconnected (" + this->type + ", " + this->identifier + ")");
+        IRQMSignalHandler::sendSignal("mmrconnection", "disconnected", this->type, this->identifier);
+    }
+
     finalize();
 
     emit disconnected();
@@ -89,6 +95,10 @@ void MMRConnection::finalize() {
     sendRequest(data);
 
     data->deleteLater();
+
+    type = "";
+    identifier = "";
+}
 //---------------------------------------------------------------------------
 void MMRConnection::close() {
     if (this->ws) {
@@ -112,6 +122,9 @@ void MMRConnection::handleRequest(MMRWSData *wsData) {
 void MMRConnection::handleRequestRegister(QString type, QVariantMap data) {
     this->type = data.value("type").toString();
     this->identifier = data.value("identifier").toString();
+
+    log("registered (" + this->type + ", " + this->identifier + ")");
+    IRQMSignalHandler::sendSignal("mmrconnection", "registered", this->type, this->identifier);
 
     MMRWSData wsData;
     wsData.requestType = type;
