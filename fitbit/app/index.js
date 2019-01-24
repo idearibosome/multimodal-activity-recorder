@@ -28,6 +28,8 @@ const gyroData = document.getElementById("gyro-data");
 const hrmData = document.getElementById("hrm-data");
 const orientationData = document.getElementById("orientation-data");
 
+let displayCount = 0;
+
 messaging.peerSocket.onopen = () => {
   console.log("Ready");
 }
@@ -69,16 +71,19 @@ function refreshData() {
     },
     orientation: orientation.quaternion ? orientation.quaternion.map(n => n.toFixed(3)) : null,
   }
-
-  accelData.text = JSON.stringify(data.accel);
-  barData.text = JSON.stringify(data.bar);
-  bpsData.text = JSON.stringify(data.bps);
-  gyroData.text = JSON.stringify(data.gyro);
-  hrmData.text = JSON.stringify(data.hrm);
-  orientationData.text = JSON.stringify(data.orientation);
+  
+  displayCount += 1;
+  if (displayCount % 10 == 0) {
+    accelData.text = JSON.stringify(data.accel);
+    barData.text = JSON.stringify(data.bar);
+    bpsData.text = JSON.stringify(data.bps);
+    gyroData.text = JSON.stringify(data.gyro);
+    hrmData.text = JSON.stringify(data.hrm);
+    orientationData.text = JSON.stringify(data.orientation);
+  }
   
   sendDataToCompanion(data);
 }
 
 refreshData();
-setInterval(refreshData, 500);
+setInterval(refreshData, 100);
