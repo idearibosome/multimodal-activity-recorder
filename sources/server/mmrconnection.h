@@ -36,6 +36,7 @@ public:
     void start();
     void stop();
     void finalize();
+    void close();
 
     void handleRequest(MMRWSData *wsData);
     void handleRequestRegister(QString type, QVariantMap data);

@@ -66,6 +66,11 @@ void MMRServer::stopServer() {
 
     wsServer->close();
 
+    QList<MMRConnection *> connections = this->connections;
+    for (auto connection=connections.begin(); connection!=connections.end(); ++connection) {
+        (*connection)->close();
+    }
+
     this->log("ws: Stopped");
     IRQMSignalHandler::sendSignal("mmrserver", "stopped");
 }
