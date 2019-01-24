@@ -77,6 +77,7 @@ void MMRServer::setStorageBasePath(QString path) {
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
 void MMRServer::prepareModalities() {
+    this->log("ws: Prepare modalities");
     prepareFileMetadata();
 
     for (auto connection=connections.begin(); connection!=connections.end(); ++connection) {
@@ -86,18 +87,21 @@ void MMRServer::prepareModalities() {
 }
 //---------------------------------------------------------------------------
 void MMRServer::startModalityAcquisition() {
+    this->log("ws: Start data acquisition");
     for (auto connection=connections.begin(); connection!=connections.end(); ++connection) {
         (*connection)->start();
     }
 }
 //---------------------------------------------------------------------------
 void MMRServer::stopModalityAcquisition() {
+    this->log("ws: Stop data acquisition");
     for (auto connection=connections.begin(); connection!=connections.end(); ++connection) {
         (*connection)->stop();
     }
 }
 //---------------------------------------------------------------------------
 void MMRServer::finalizeModalities() {
+    this->log("ws: Finalize modalities");
     for (auto connection=connections.begin(); connection!=connections.end(); ++connection) {
         (*connection)->finalize();
     }
