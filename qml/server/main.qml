@@ -17,6 +17,9 @@ Window {
 
     property TextArea logTextArea
 
+    property ListModel modalityListModel
+    property var modalityList: ([])
+
     property bool isConnectionOperating: false
     property bool isRunning: false
 
@@ -27,7 +30,9 @@ Window {
         IRQM.SignalHandler.bindSignal("mmrserver", "listeningFailed", this, "serverListeningFailed");
         IRQM.SignalHandler.bindSignal("mmrserver", "stopped", this, "serverStopped");
 
+        IRQM.SignalHandler.bindSignal("mmrconnection", "registered", this, "connectionRegistered");
         IRQM.SignalHandler.bindSignal("mmrconnection", "receivedData", this, "connectionReceivedData");
+        IRQM.SignalHandler.bindSignal("mmrconnection", "disconnected", this, "connectionDisconnected");
     }
 
     Component.onDestruction: {
@@ -56,7 +61,28 @@ Window {
     }
     //---------------------------------------------------------------------------
     //---------------------------------------------------------------------------
+    function connectionRegistered(type, identifier) {
+        modalityList.push({"type": type, "identifier": identifier});
+        var text = type + " (" + identifier + ")";
+        modalityListModel.append({"text": text});
+    }
+    //---------------------------------------------------------------------------
     function connectionReceivedData(identifier, size) {
+    }
+    //---------------------------------------------------------------------------
+    function connectionDisconnected(type, identifier) {
+        var modalityIndex = -1;
+        for (var i in modalityList) {
+            if (modalityList[i]["identifier"] === identifier) {
+                modalityIndex = i;
+                break;
+            }
+        }
+
+        if (modalityIndex >= 0) {
+            modalityList.splice(modalityIndex, 1);
+            modalityListModel.remove(modalityIndex);
+        }
     }
     //---------------------------------------------------------------------------
     //---------------------------------------------------------------------------
@@ -171,7 +197,13 @@ Window {
                                 TableViewColumn {
                                     role: "text"
                                 }
-                                model: ListModel {}
+                                model: ListModel {
+                                    id: modalityListModel
+
+                                    Component.onCompleted: {
+                                        container.modalityListModel = modalityListModel;
+                                    }
+                                }
                             }
                         }
                         ColumnLayout {
