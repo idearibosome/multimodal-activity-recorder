@@ -138,6 +138,10 @@ Window {
                             text: "Stop Server"
                             enabled: !container.isConnectionOperating
                             visible: container.isRunning
+
+                            onClicked: {
+                                mServer.stopServer();
+                            }
                         }
                     }
 
