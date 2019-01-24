@@ -77,7 +77,7 @@ void MMRServer::stopServer() {
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
 void MMRServer::setStorageBasePath(QString path) {
-    this->log("ws: Set storage base path: " + path);
+    this->log("Set storage base path: " + path);
     storageBasePath = path;
 }
 //---------------------------------------------------------------------------
