@@ -230,7 +230,7 @@ void MMRFileMetadata::prepareWritingBlobData() {
     QString queryString;
 
     queryString = "CREATE TABLE IF NOT EXISTS data ( "
-            "modality_idx INTEGER PRIMARY KEY AUTOINCREMENT, "
+            "data_idx INTEGER PRIMARY KEY AUTOINCREMENT, "
             "recording_idx INTEGER, "
             "type TEXT, "
             "data BLOB "
