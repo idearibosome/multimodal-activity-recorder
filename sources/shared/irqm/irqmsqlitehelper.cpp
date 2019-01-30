@@ -82,7 +82,7 @@ QVariantMap IRQMSQLiteHelper::fetchRow(sqlite3_stmt *stmt) {
         int columnType = sqlite3_column_type(stmt, i);
 
         if (columnType == SQLITE_INTEGER) {
-            row.insert(key, sqlite3_column_int(stmt, i));
+            row.insert(key, sqlite3_column_int64(stmt, i));
         }
         else if (columnType == SQLITE_FLOAT) {
             row.insert(key, sqlite3_column_double(stmt, i));
