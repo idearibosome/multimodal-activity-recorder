@@ -3,6 +3,7 @@
 
 #include <QMap>
 #include <QObject>
+#include <QThread>
 #include <QVariant>
 #include <QWebSocket>
 #include <QWebSocketServer>
@@ -44,9 +45,18 @@ private:
     void prepareFileMetadata();
     void finalizeFileMetadata();
 
+signals:
+    void prepare(MMRFileMetadata *fileMetadata);
+    void start();
+    void stop();
+    void finalize();
+
 private slots:
     void slotWsServerNewConnection();
     void slotConnectionDisconnected();
+
+    void slotConnectionSendBinaryMessage(QWebSocket *ws, QByteArray message);
+    void slotConnectionCloseWebSocket(QWebSocket *ws);
 
 };
 

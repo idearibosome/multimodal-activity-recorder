@@ -16,14 +16,28 @@ MMRServer::MMRServer(QObject *parent) : QObject(parent) {
 void MMRServer::slotWsServerNewConnection() {
     QWebSocket *socket = wsServer->nextPendingConnection();
 
-    MMRConnection *connection = new MMRConnection(this);
+    MMRConnection *connection = new MMRConnection();
     connection->storageBasePath = storageBasePath;
-
-    QObject::connect(connection, SIGNAL(disconnected()), this, SLOT(slotConnectionDisconnected()));
-
     connection->setWebSocket(socket);
 
+    QThread *connectionThread = new QThread(this);
+    connection->moveToThread(connectionThread);
+
+    QObject::connect(this, SIGNAL(prepare(MMRFileMetadata*)), connection, SLOT(slotPrepare(MMRFileMetadata*)));
+    QObject::connect(this, SIGNAL(start()), connection, SLOT(slotStart()));
+    QObject::connect(this, SIGNAL(stop()), connection, SLOT(slotStop()));
+    QObject::connect(this, SIGNAL(finalize()), connection, SLOT(slotFinalize()));
+
+    QObject::connect(connection, SIGNAL(sendBinaryMessage(QWebSocket*,QByteArray)), this, SLOT(slotConnectionSendBinaryMessage(QWebSocket*,QByteArray)));
+    QObject::connect(connection, SIGNAL(closeWebSocket(QWebSocket*)), this, SLOT(slotConnectionCloseWebSocket(QWebSocket*)));
+
+    QObject::connect(connection, SIGNAL(disconnected()), this, SLOT(slotConnectionDisconnected()));
+    QObject::connect(connection, SIGNAL(disconnected()), connectionThread, SLOT(quit()));
+    QObject::connect(connectionThread, SIGNAL(finished()), connectionThread, SLOT(deleteLater()));
+
     connections.append(connection);
+
+    connectionThread->start();
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
@@ -32,6 +46,15 @@ void MMRServer::slotConnectionDisconnected() {
     connection->deleteLater();
 
     connections.removeAll(connection);
+}
+//---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+void MMRServer::slotConnectionSendBinaryMessage(QWebSocket *ws, QByteArray message) {
+    ws->sendBinaryMessage(message);
+}
+//---------------------------------------------------------------------------
+void MMRServer::slotConnectionCloseWebSocket(QWebSocket *ws) {
+    ws->close();
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
@@ -86,31 +109,22 @@ void MMRServer::prepareModalities() {
     this->log("ws: Prepare modalities");
     prepareFileMetadata();
 
-    for (auto connection=connections.begin(); connection!=connections.end(); ++connection) {
-        (*connection)->setFileMetadata(fileMetadata);
-        (*connection)->prepare();
-    }
+    emit prepare(fileMetadata);
 }
 //---------------------------------------------------------------------------
 void MMRServer::startModalityAcquisition() {
     this->log("ws: Start data acquisition");
-    for (auto connection=connections.begin(); connection!=connections.end(); ++connection) {
-        (*connection)->start();
-    }
+    emit start();
 }
 //---------------------------------------------------------------------------
 void MMRServer::stopModalityAcquisition() {
     this->log("ws: Stop data acquisition");
-    for (auto connection=connections.begin(); connection!=connections.end(); ++connection) {
-        (*connection)->stop();
-    }
+    emit stop();
 }
 //---------------------------------------------------------------------------
 void MMRServer::finalizeModalities() {
     this->log("ws: Finalize modalities");
-    for (auto connection=connections.begin(); connection!=connections.end(); ++connection) {
-        (*connection)->finalize();
-    }
+    emit finalize();
 
     finalizeFileMetadata();
 }

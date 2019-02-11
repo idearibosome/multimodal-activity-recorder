@@ -34,6 +34,24 @@ void MMRConnection::slotWsDisconnected() {
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
+void MMRConnection::slotPrepare(MMRFileMetadata *fileMetadata) {
+    setFileMetadata(fileMetadata);
+    prepare();
+}
+//---------------------------------------------------------------------------
+void MMRConnection::slotStart() {
+    start();
+}
+//---------------------------------------------------------------------------
+void MMRConnection::slotStop() {
+    stop();
+}
+//---------------------------------------------------------------------------
+void MMRConnection::slotFinalize() {
+    finalize();
+}
+//---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
 void MMRConnection::log(QString text) {
     IRQMSignalHandler::sendSignal("main", "log", "[" + identifier.left(6) + "] " + text);
 }
@@ -42,8 +60,8 @@ void MMRConnection::log(QString text) {
 void MMRConnection::setWebSocket(QWebSocket *ws) {
     this->ws = ws;
 
-    QObject::connect(ws, SIGNAL(binaryMessageReceived(QByteArray)), this, SLOT(slotWsBinaryMessageReceived(QByteArray)));
-    QObject::connect(ws, SIGNAL(disconnected()), this, SLOT(slotWsDisconnected()));
+    QObject::connect(ws, SIGNAL(binaryMessageReceived(QByteArray)), this, SLOT(slotWsBinaryMessageReceived(QByteArray)), Qt::QueuedConnection);
+    QObject::connect(ws, SIGNAL(disconnected()), this, SLOT(slotWsDisconnected()), Qt::QueuedConnection);
 }
 //---------------------------------------------------------------------------
 void MMRConnection::setFileMetadata(MMRFileMetadata *fileMetadata) {
@@ -102,7 +120,7 @@ void MMRConnection::finalize() {
 //---------------------------------------------------------------------------
 void MMRConnection::close() {
     if (this->ws) {
-        this->ws->close();
+        emit closeWebSocket(this->ws);
     }
 }
 //---------------------------------------------------------------------------
@@ -131,7 +149,7 @@ void MMRConnection::handleRequestRegister(QString type, QVariantMap data) {
     wsData.dataType = "response";
     wsData.data.insert("result", QString("ok"));
 
-    ws->sendBinaryMessage(wsData.toByteArray());
+    emit sendBinaryMessage(ws, wsData.toByteArray());
 }
 //---------------------------------------------------------------------------
 void MMRConnection::handleRequestData(QString type, QVariantMap data) {
@@ -151,7 +169,7 @@ void MMRConnection::handleRequestData(QString type, QVariantMap data) {
     wsData.dataType = "response";
     wsData.data.insert("result", QString("ok"));
 
-    ws->sendBinaryMessage(wsData.toByteArray());
+    emit sendBinaryMessage(ws, wsData.toByteArray());
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
@@ -159,7 +177,7 @@ void MMRConnection::sendRequest(MMRWSData *wsData) {
     if (!ws) return;
 
     QByteArray message = wsData->toByteArray();
-    ws->sendBinaryMessage(message);
+    emit sendBinaryMessage(ws, message);
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------

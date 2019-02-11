@@ -49,11 +49,18 @@ private:
     void closeFile();
 
 signals:
+    void sendBinaryMessage(QWebSocket *ws, QByteArray message);
+    void closeWebSocket(QWebSocket *ws);
     void disconnected();
 
 public slots:
     void slotWsBinaryMessageReceived(QByteArray message);
     void slotWsDisconnected();
+    void slotPrepare(MMRFileMetadata *fileMetadata);
+    void slotStart();
+    void slotStop();
+    void slotFinalize();
+
 };
 
 #endif // MMRCONNECTION_H
