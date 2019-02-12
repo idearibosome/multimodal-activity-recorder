@@ -62,8 +62,11 @@ void MMRClient::slotModalityAcquired(qint64 timestamp, QByteArray data) {
     {
         QMutexLocker modalityDataMutexLocker(&modalityDataMutex);
 
-        pendingModalityDataTimestamp = timestamp;
-        pendingModalityData = data;
+        QVariantMap pendingModalityData;
+        pendingModalityData.insert("timestamp", timestamp);
+        pendingModalityData.insert("data", data);
+
+        pendingModalityDataList.append(pendingModalityData);
         hasPendingModalityData = true;
     }
 
@@ -79,16 +82,16 @@ void MMRClient::sendPendingModalityData() {
     if (!hasPendingModalityData) return;
 
     MMRWSData wsData;
-    wsData.requestType = "data";
+    wsData.requestType = "data_list";
     wsData.dataType = "request";
-    wsData.data.insert("timestamp", pendingModalityDataTimestamp);
-    wsData.data.insert("data", pendingModalityData);
+    wsData.data.insert("list", pendingModalityDataList);
 
     ws->sendBinaryMessage(wsData.toByteArray());
 
     isWsReadyToReceiveModalityData = false;
     hasPendingModalityData = false;
-    pendingModalityData = QByteArray();
+    pendingModalityDataList.clear();
+
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
@@ -205,6 +208,7 @@ void MMRClient::handleResponse(MMRWSData *wsData) {
 
     if (type == "register") handleResponseRegister(type, data);
     else if (type == "data") handleResponseData(type, data);
+    else if (type == "data_list") handleResponseDataList(type, data);
 
     wsData->deleteLater();
 }
@@ -224,6 +228,16 @@ void MMRClient::handleResponseData(QString type, QVariantMap data) {
         QMutexLocker modalityDataMutexLocker(&modalityDataMutex);
 
         isWsReadyToReceiveModalityData = true;
+    }
+}
+//---------------------------------------------------------------------------
+void MMRClient::handleResponseDataList(QString type, QVariantMap data) {
+    if (data.value("result").toString() == "ok") {
+        {
+            QMutexLocker modalityDataMutexLocker(&modalityDataMutex);
+            isWsReadyToReceiveModalityData = true;
+        }
+        sendPendingModalityData();
     }
 }
 //---------------------------------------------------------------------------

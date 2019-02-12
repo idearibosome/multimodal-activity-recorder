@@ -133,6 +133,7 @@ void MMRConnection::handleRequest(MMRWSData *wsData) {
 
     if (type == "register") handleRequestRegister(type, data);
     else if (type == "data") handleRequestData(type, data);
+    else if (type == "data_list") handleRequestDataList(type, data);
 
     wsData->deleteLater();
 }
@@ -170,6 +171,38 @@ void MMRConnection::handleRequestData(QString type, QVariantMap data) {
     wsData.data.insert("result", QString("ok"));
 
     emit sendBinaryMessage(ws, wsData.toByteArray());
+}
+//---------------------------------------------------------------------------
+void MMRConnection::handleRequestDataList(QString type, QVariantMap data) {
+    if (!fileData) return;
+
+    fileMetadata->beginTransaction();
+
+    QVariantList dataList = data.value("list").toList();
+    qint64 totalDataSize = 0;
+    for (int i=0; i<dataList.count(); i++) {
+        QVariantMap eachData = dataList[i].toMap();
+
+        qint64 timestamp = data.value("timestamp").toULongLong();
+        QByteArray dataByteArray = data.value("data").toByteArray();
+
+        qint64 filePos = fileData->getCurrentFilePos();
+        fileData->writeData(timestamp, dataByteArray);
+        fileMetadata->addRecording(identifier, filePos, timestamp);
+
+        totalDataSize += dataByteArray.size();
+    }
+
+    fileMetadata->commitTransaction();
+
+    IRQMSignalHandler::sendSignal("mmrconnection", "receivedData", identifier, totalDataSize);
+
+    MMRWSData wsData;
+    wsData.requestType = type;
+    wsData.dataType = "response";
+    wsData.data.insert("result", QString("ok"));
+
+    ws->sendBinaryMessage(wsData.toByteArray());
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------

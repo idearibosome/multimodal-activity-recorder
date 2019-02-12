@@ -41,6 +41,7 @@ public:
     void handleRequest(MMRWSData *wsData);
     void handleRequestRegister(QString type, QVariantMap data);
     void handleRequestData(QString type, QVariantMap data);
+    void handleRequestDataList(QString type, QVariantMap data);
 
     void sendRequest(MMRWSData *wsData);
 

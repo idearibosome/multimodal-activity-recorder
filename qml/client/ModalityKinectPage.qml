@@ -6,10 +6,14 @@ ModalityPage {
     id: container
 
     property ComboBox colorResolutionComboBox
+    property ComboBox maxFrequencyComboBox
 
     onIdentifierChanged: {
         if (colorResolutionComboBox) {
             colorResolutionComboBox.updateConfiguration();
+        }
+        if (maxFrequencyComboBox) {
+            maxFrequencyComboBox.updateConfiguration();
         }
     }
 
@@ -50,6 +54,39 @@ ModalityPage {
                     if (currentIndex < 0) return;
 
                     qMain.clientSetConfiguration(container.identifier, "color_height", heights[currentIndex]);
+                }
+
+                onCurrentIndexChanged: {
+                    updateConfiguration();
+                }
+            }
+        }
+        RowLayout {
+            Layout.fillWidth: true
+            spacing: 8
+
+            Text {
+                text: "Max. frequency: "
+            }
+            ComboBox {
+                id: maxFrequencyComboBox
+                Layout.fillWidth: true
+                model: ["Infinite", "60", "30", "25", "20", "15", "10", "5"]
+                currentIndex: 0
+                enabled: !container.isConnected
+
+                property var frequencies: [0, 60, 30, 25, 20, 15, 10, 5]
+
+                Component.onCompleted: {
+                    container.maxFrequencyComboBox = this;
+                    updateConfiguration();
+                }
+
+                function updateConfiguration() {
+                    if (container.identifier.length <= 0) return;
+                    if (currentIndex < 0) return;
+
+                    qMain.clientSetConfiguration(container.identifier, "max_frequency", frequencies[currentIndex]);
                 }
 
                 onCurrentIndexChanged: {
