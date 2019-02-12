@@ -90,4 +90,4 @@ function refreshData() {
 }
 
 refreshData();
-setInterval(refreshData, 100);
+setInterval(refreshData, 50);
