@@ -183,8 +183,8 @@ void MMRConnection::handleRequestDataList(QString type, QVariantMap data) {
     for (int i=0; i<dataList.count(); i++) {
         QVariantMap eachData = dataList[i].toMap();
 
-        qint64 timestamp = data.value("timestamp").toULongLong();
-        QByteArray dataByteArray = data.value("data").toByteArray();
+        qint64 timestamp = eachData.value("timestamp").toULongLong();
+        QByteArray dataByteArray = eachData.value("data").toByteArray();
 
         qint64 filePos = fileData->getCurrentFilePos();
         fileData->writeData(timestamp, dataByteArray);
