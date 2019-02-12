@@ -202,7 +202,7 @@ void MMRConnection::handleRequestDataList(QString type, QVariantMap data) {
     wsData.dataType = "response";
     wsData.data.insert("result", QString("ok"));
 
-    ws->sendBinaryMessage(wsData.toByteArray());
+    emit sendBinaryMessage(ws, wsData.toByteArray());
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
