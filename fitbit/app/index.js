@@ -1,11 +1,15 @@
 import { Accelerometer } from "accelerometer";
 import { Barometer } from "barometer";
 import { BodyPresenceSensor } from "body-presence";
+import { display } from "display";
 import document from "document";
 import { Gyroscope } from "gyroscope";
 import { HeartRateSensor } from "heart-rate";
 import { OrientationSensor } from "orientation";
 import * as messaging from "messaging";
+
+display.autoOff = false;
+display.on = true;
 
 const accel = new Accelerometer();
 const bar = new Barometer();
