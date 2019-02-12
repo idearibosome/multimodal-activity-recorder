@@ -59,6 +59,11 @@ void MMRClient::slotWsBinaryMessageReceived(QByteArray message) {
 //---------------------------------------------------------------------------
 void MMRClient::slotModalityAcquired(qint64 timestamp, QByteArray data) {
 
+    if (!hadReceiveModalityData) {
+        hadReceiveModalityData = true;
+        log("Acquired initial data");
+    }
+
     {
         QMutexLocker modalityDataMutexLocker(&modalityDataMutex);
 

@@ -26,6 +26,7 @@ public:
     QWebSocket *ws = NULL;
 
     QMutex modalityDataMutex;
+    bool hadReceiveModalityData = false;
     bool isWsReadyToReceiveModalityData = false;
     bool hasPendingModalityData = false;
     QVariantList pendingModalityDataList;
