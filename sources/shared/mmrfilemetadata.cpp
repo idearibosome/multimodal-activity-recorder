@@ -181,6 +181,15 @@ void MMRFileMetadata::addRecording(QString identifier, qint64 dataPos, qint64 ti
     }
 }
 //---------------------------------------------------------------------------
+void MMRFileMetadata::beginTransaction() {
+    sqlite3_exec(db, "BEGIN TRANSACTION;", nullptr, nullptr, nullptr);
+}
+//---------------------------------------------------------------------------
+void MMRFileMetadata::commitTransaction() {
+    sqlite3_exec(db, "COMMIT;", nullptr, nullptr, nullptr);
+}
+//---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
 void MMRFileMetadata::finalizeWriting() {
 
 }

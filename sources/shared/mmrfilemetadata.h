@@ -37,6 +37,8 @@ public:
     void createToFileDirPath(QString path);
     void addModality(QString type, QString identifier, QVariantMap configuration);
     void addRecording(QString identifier, qint64 dataPos, qint64 timestamp);
+    void beginTransaction();
+    void commitTransaction();
     void finalizeWriting();
 
 
