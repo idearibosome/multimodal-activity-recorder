@@ -185,6 +185,10 @@ void KinectThread::run() {
         if (depthFrame) {
             depthFrame->Release();
         }
+
+        if (maxAcquisitionFrequency > 0) {
+            usleep(1000000 / maxAcquisitionFrequency);
+        }
     }
 
     delete colorFrameBuffer;
@@ -206,11 +210,13 @@ ModalityKinect::ModalityKinect(QObject *parent) : Modality(parent) {
 //---------------------------------------------------------------------------
 bool ModalityKinect::initialize(QVariantMap configuration) {
     colorFrameHeight = configuration.value("color_height").toInt();
+    maxAcquisitionFrequency = configuration.value("max_frequency").toInt();
 
     bool res = kinectThread.initialize();
     if (!res) return false;
 
     kinectThread.colorFrameHeight = colorFrameHeight;
+    kinectThread.maxAcquisitionFrequency = maxAcquisitionFrequency;
 
     return Modality::initialize(configuration);
 }

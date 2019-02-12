@@ -29,6 +29,7 @@ public:
     ModalityKinect *modality;
 
     int colorFrameHeight;
+    int maxAcquisitionFrequency;
 
     bool initialize();
     void reset();
@@ -66,6 +67,7 @@ public:
     KinectThread kinectThread;
 
     int colorFrameHeight = 1080;
+    int maxAcquisitionFrequency = 0;
 
     bool initialize(QVariantMap configuration) override;
     void reset() override;
