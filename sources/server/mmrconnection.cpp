@@ -158,6 +158,8 @@ void MMRConnection::handleRequestData(QString type, QVariantMap data) {
 void MMRConnection::handleRequestDataList(QString type, QVariantMap data) {
     if (!fileData) return;
 
+    fileMetadata->beginTransaction();
+
     QVariantList dataList = data.value("list").toList();
     qint64 totalDataSize = 0;
     for (int i=0; i<dataList.count(); i++) {
@@ -172,6 +174,8 @@ void MMRConnection::handleRequestDataList(QString type, QVariantMap data) {
 
         totalDataSize += dataByteArray.size();
     }
+
+    fileMetadata->commitTransaction();
 
     IRQMSignalHandler::sendSignal("mmrconnection", "receivedData", identifier, totalDataSize);
 
