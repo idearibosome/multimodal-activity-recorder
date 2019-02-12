@@ -105,8 +105,6 @@ void ModalityFitbit::stopServer() {
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
 void ModalityFitbit::processAcquiredData(QByteArray data) {
-    qDebug() << data;
-
     QVariantMap parsedData = IRQMJSONHelper::byteArrayToJSONObject(data).toMap();
     if (parsedData.isEmpty()) return;
 
