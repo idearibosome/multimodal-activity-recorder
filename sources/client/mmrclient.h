@@ -28,8 +28,7 @@ public:
     QMutex modalityDataMutex;
     bool isWsReadyToReceiveModalityData = false;
     bool hasPendingModalityData = false;
-    qint64 pendingModalityDataTimestamp;
-    QByteArray pendingModalityData;
+    QVariantList pendingModalityDataList;
 
     void log(QString text);
 
@@ -51,6 +50,7 @@ public:
     void handleResponse(MMRWSData *wsData);
     void handleResponseRegister(QString type, QVariantMap data);
     void handleResponseData(QString type, QVariantMap data);
+    void handleResponseDataList(QString type, QVariantMap data);
 
 private:
     void sendPendingModalityData();
