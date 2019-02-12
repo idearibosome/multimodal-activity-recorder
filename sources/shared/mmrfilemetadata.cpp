@@ -118,12 +118,21 @@ qint64 MMRFileMetadata::getModalityDataPos(QString identifier, qint64 timestamp)
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
-void MMRFileMetadata::createToFileDirPath(QString path) {
+void MMRFileMetadata::createToFileDirPath(QString path, bool inMemoryMode) {
     if (db) return;
 
-    QString filePath = IRQMPathHelper::concatenate(path, MMR_FILE_METADATA_FILENAME);
+    isInMemoryDb = inMemoryMode;
 
-    int rc = sqlite3_open_v2(filePath.toUtf8().constData(), &db, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, NULL);
+    QString filePath = IRQMPathHelper::concatenate(path, MMR_FILE_METADATA_FILENAME);
+    dbFilePath = filePath;
+
+    int rc = SQLITE_OK;
+    if (inMemoryMode) {
+        rc = sqlite3_open_v2(":memory:", &db, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, NULL);
+    }
+    else {
+        rc = sqlite3_open_v2(filePath.toUtf8().constData(), &db, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, NULL);
+    }
     if (rc != SQLITE_OK) {
         qDebug() << "failed to open or create sqlite file:" << filePath;
         return;
@@ -193,7 +202,28 @@ void MMRFileMetadata::commitTransaction() {
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
 void MMRFileMetadata::finalizeWriting() {
+    if (!db) return;
 
+    if (isInMemoryDb) {
+        sqlite3 *fileDb;
+        int rc;
+
+        rc = sqlite3_open(dbFilePath.toUtf8().constData(), &fileDb);
+        if (rc == SQLITE_OK) {
+            sqlite3_backup *fileDbBackup;
+            fileDbBackup = sqlite3_backup_init(fileDb, "main", db, "main");
+            if (fileDbBackup) {
+                do {
+                    rc = sqlite3_backup_step(fileDbBackup, 10);
+                    if (rc == SQLITE_BUSY || rc == SQLITE_LOCKED) {
+                      sqlite3_sleep(250);
+                    }
+                } while (rc == SQLITE_OK || rc == SQLITE_BUSY || rc == SQLITE_LOCKED);
+            }
+            sqlite3_backup_finish(fileDbBackup);
+            sqlite3_close(fileDb);
+        }
+    }
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------

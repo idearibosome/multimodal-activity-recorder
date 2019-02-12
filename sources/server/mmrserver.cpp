@@ -142,7 +142,7 @@ void MMRServer::prepareFileMetadata() {
 
     fileMetadata = new MMRFileMetadata(this);
 
-    fileMetadata->createToFileDirPath(storageBasePath);
+    fileMetadata->createToFileDirPath(storageBasePath, true);
 }
 //---------------------------------------------------------------------------
 void MMRServer::finalizeFileMetadata() {

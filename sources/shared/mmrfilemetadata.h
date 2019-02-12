@@ -23,6 +23,9 @@ public:
     sqlite3 *db = NULL;
     QMutex dbMutex, dbTransactionMutex;
 
+    bool isInMemoryDb = false;
+    QString dbFilePath;
+
     QMap<QString, int> modalityIdentifierToIdxMap;
 
     void clear();
@@ -34,7 +37,7 @@ public:
     Q_INVOKABLE qint64 getLength();
     Q_INVOKABLE qint64 getModalityDataPos(QString identifier, qint64 timestamp);
 
-    void createToFileDirPath(QString path);
+    void createToFileDirPath(QString path, bool inMemoryMode);
     void addModality(QString type, QString identifier, QVariantMap configuration);
     void addRecording(QString identifier, qint64 dataPos, qint64 timestamp);
     void beginTransaction();
