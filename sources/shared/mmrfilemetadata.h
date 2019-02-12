@@ -21,7 +21,7 @@ public:
     QString basePath;
 
     sqlite3 *db = NULL;
-    QMutex dbMutex;
+    QMutex dbMutex, dbTransactionMutex;
 
     QMap<QString, int> modalityIdentifierToIdxMap;
 
