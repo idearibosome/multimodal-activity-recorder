@@ -1,14 +1,12 @@
 <svg>
-  <text id="accel-label" class="sensor-label" x="50%" y="30">accelerometer</text>
-  <text id="accel-data" class="sensor-data" x="50%" y="50">{ ... }</text>
-  <text id="bar-label" class="sensor-label" x="50%" y="75">barometer</text>
-  <text id="bar-data" class="sensor-data" x="50%" y="95">{ ... }</text>
-  <text id="bps-label" class="sensor-label" x="50%" y="120">body-presence</text>
-  <text id="bps-data" class="sensor-data" x="50%" y="140">{ ... }</text>
-  <text id="gyro-label" class="sensor-label" x="50%" y="165">gyroscope</text>
-  <text id="gyro-data" class="sensor-data" x="50%" y="185">{ ... }</text>
-  <text id="hrm-label" class="sensor-label" x="50%" y="210">heart rate</text>
-  <text id="hrm-data" class="sensor-data" x="50%" y="230">{ ... }</text>
-  <text id="orientation-label" class="sensor-label" x="50%" y="255">orientation</text>
-  <text id="orientation-data" class="sensor-data" x="50%" y="275">{ ... }</text>
+  <text id="accel-data" class="sensor-data" x="50%" y="30">{ ... }</text>
+  <text id="bar-data" class="sensor-data" x="50%" y="50">{ ... }</text>
+  <text id="bps-data" class="sensor-data" x="50%" y="70">{ ... }</text>
+  <text id="gyro-data" class="sensor-data" x="50%" y="90">{ ... }</text>
+  <text id="hrm-data" class="sensor-data" x="50%" y="110">{ ... }</text>
+  <text id="orientation-data" class="sensor-data" x="50%" y="130">{ ... }</text>
+  <text id="connection-label" class="sensor-label" x="50%" y="160">connection</text>
+  <text id="connection-data" class="sensor-data" x="50%" y="180">{ ... }</text>
+  <text id="timing-label" class="sensor-label" x="50%" y="210">timing</text>
+  <text id="timing-data" class="sensor-data" x="50%" y="230">{ ... }</text>
 </svg>

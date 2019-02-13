@@ -32,6 +32,8 @@ const bpsData = document.getElementById("bps-data");
 const gyroData = document.getElementById("gyro-data");
 const hrmData = document.getElementById("hrm-data");
 const orientationData = document.getElementById("orientation-data");
+const connectionData = document.getElementById("connection-data");
+const timingData = document.getElementById("timing-data");
 
 let displayCount = 0;
 let isConnected = false;
@@ -109,6 +111,8 @@ function refreshData() {
     gyroData.text = JSON.stringify(data.gyro);
     hrmData.text = JSON.stringify(data.hrm);
     orientationData.text = JSON.stringify(data.orientation);
+    connectionData.text = isConnected ? 'O' : 'X';
+    timingData.text = companionTiming + ' ms';
   }
   
   sendDataToCompanion(data);
