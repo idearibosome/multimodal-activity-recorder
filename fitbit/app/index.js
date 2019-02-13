@@ -6,6 +6,7 @@ import document from "document";
 import { Gyroscope } from "gyroscope";
 import { HeartRateSensor } from "heart-rate";
 import { OrientationSensor } from "orientation";
+import { vibration } from "haptics";
 import * as messaging from "messaging";
 
 display.autoOff = false;
@@ -33,23 +34,47 @@ const hrmData = document.getElementById("hrm-data");
 const orientationData = document.getElementById("orientation-data");
 
 let displayCount = 0;
+let isConnected = false;
+let initialTime = Date.now();
+let companionTiming = 0;
+let responseWaitingTimer = null;
 
 messaging.peerSocket.onopen = () => {
   console.log("Ready");
-}
+};
 
 messaging.peerSocket.onerror = (err) => {
   console.log(`Connection error: ${err.code} - ${err.message}`);
-}
+};
 
-messaging.peerSocket.onmessage = (evt) => {
-  console.log(JSON.stringify(evt.data));
-}
+messaging.peerSocket.onmessage = (event) => {
+  console.log(event.data);
+  const newTiming = Number(event.data);
+  companionTiming = Math.max(0, newTiming * 0.9);
+  isConnected = true;
+  refreshResponseWaitingTimer();
+};
 
 function sendDataToCompanion(data) {
   if (messaging.peerSocket.readyState === messaging.peerSocket.OPEN) {
+    console.log('send');
+    data.ts = (Date.now()-initialTime);
     messaging.peerSocket.send(data);
   }
+}
+
+function refreshResponseWaitingTimer() {
+  if (responseWaitingTimer) {
+    clearTimeout(responseWaitingTimer);
+    responseWaitingTimer = null;
+  }
+  responseWaitingTimer = setTimeout(onResponseWaitingTimer, 5000);
+}
+function onResponseWaitingTimer() {
+  vibration.start('ping');
+  isConnected = false;
+  companionTiming = 0;
+  refreshResponseWaitingTimer();
 }
 
 function refreshData() {
@@ -77,7 +102,7 @@ function refreshData() {
   }
   
   displayCount += 1;
-  if (displayCount % 10 == 0) {
+  if (displayCount % 5 == 0) {
     accelData.text = JSON.stringify(data.accel);
     barData.text = JSON.stringify(data.bar);
     bpsData.text = JSON.stringify(data.bps);
@@ -87,7 +112,16 @@ function refreshData() {
   }
   
   sendDataToCompanion(data);
+  
+  let refreshPeriod = 1000;
+  if (companionTiming > 0) {
+    refreshPeriod = Math.max(300, companionTiming);
+  }
+  refreshPeriod = Math.min(2000, refreshPeriod);
+  setTimeout(refreshData, refreshPeriod);
 }
 
-refreshData();
-setInterval(refreshData, 50);
+setTimeout(function() {
+  refreshData();
+  refreshResponseWaitingTimer();
+}, 5000);

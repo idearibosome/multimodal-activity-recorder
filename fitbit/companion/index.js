@@ -4,9 +4,10 @@ import * as messaging from 'messaging';
 let address = JSON.parse(settingsStorage.getItem('address'))['name'];
 
 let isSendingData = false;
+let lastReceiveTime = 0;
 
 messaging.peerSocket.onopen = () => {
-  console.log('Ready');
+  console.log('Companion Ready');
 };
 
 messaging.peerSocket.onerror = (err) => {
@@ -14,6 +15,11 @@ messaging.peerSocket.onerror = (err) => {
 };
 
 messaging.peerSocket.onmessage = (event) => {
+  console.log('received (' + event.data.ts + ')');
+  if (lastReceiveTime > 0) {
+    messaging.peerSocket.send((Date.now() - lastReceiveTime));
+  }
+  lastReceiveTime = Date.now();
   sendDataToClient(event.data);
 };
 
