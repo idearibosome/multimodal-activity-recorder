@@ -39,13 +39,17 @@ QVariantMap Modality::parsedDataItemWithImage(QString name, QImage image) {
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
+qint64 Modality::getTimestamp() {
+    qint64 timestamp = QDateTime::currentMSecsSinceEpoch();
+    return timestamp;
+}
+//---------------------------------------------------------------------------
 void Modality::startRecordingAcquisitionTimestamp() {
-    this->startAcquisitionTimestamp = QDateTime::currentMSecsSinceEpoch();
+    this->startAcquisitionTimestamp = getTimestamp();
 }
 //---------------------------------------------------------------------------
 qint64 Modality::getAcquisitionTimestamp() {
-    qint64 currentTimestamp = QDateTime::currentMSecsSinceEpoch();
-    return currentTimestamp - this->startAcquisitionTimestamp;
+    return getTimestamp() - this->startAcquisitionTimestamp;
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------

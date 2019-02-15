@@ -31,6 +31,7 @@ public:
     static QVariantMap parsedDataItemWithValue(QString name, QVariant value);
     static QVariantMap parsedDataItemWithImage(QString name, QImage image);
 
+    qint64 getTimestamp();
     void startRecordingAcquisitionTimestamp();
     qint64 getAcquisitionTimestamp();
 
