@@ -33,7 +33,7 @@ public:
 
     qint64 getTimestamp();
     void startRecordingAcquisitionTimestamp();
-    qint64 getAcquisitionTimestamp();
+    qint64 getAcquisitionTimestamp(qint64 timestamp=0);
 
 signals:
     void acquired(qint64 timestamp, QByteArray data);

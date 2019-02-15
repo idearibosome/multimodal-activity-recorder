@@ -48,8 +48,9 @@ void Modality::startRecordingAcquisitionTimestamp() {
     this->startAcquisitionTimestamp = getTimestamp();
 }
 //---------------------------------------------------------------------------
-qint64 Modality::getAcquisitionTimestamp() {
-    return getTimestamp() - this->startAcquisitionTimestamp;
+qint64 Modality::getAcquisitionTimestamp(qint64 timestamp) {
+    if (timestamp == 0) timestamp = getTimestamp();
+    return timestamp - this->startAcquisitionTimestamp;
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
