@@ -52,7 +52,8 @@ messaging.peerSocket.onerror = (err) => {
 messaging.peerSocket.onmessage = (event) => {
   console.log(event.data);
   const newTiming = Number(event.data);
-  companionTiming = Math.max(0, newTiming * 0.9);
+  companionTiming = (companionTiming + newTiming) / 2;
+  companionTiming = Math.round(Math.max(0, companionTiming * 0.9));
   isConnected = true;
   refreshResponseWaitingTimer();
 };
