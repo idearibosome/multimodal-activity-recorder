@@ -19,6 +19,7 @@ class ModalityFitbit : public Modality
 public:
     explicit ModalityFitbit(QObject *parent = nullptr);
 
+    bool isInitialized;
     bool isInAcquisition;
 
     bool initialize(QVariantMap configuration) override;
@@ -36,6 +37,8 @@ public:
 
 private:
     qhttp::server::QHttpServer *httpServer;
+
+    qint64 minimumTimestampDiff;
 };
 
 #endif
