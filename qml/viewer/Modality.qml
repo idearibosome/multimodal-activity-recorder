@@ -12,6 +12,7 @@ ColumnLayout {
     spacing: 0
 
     property int objectIndex: 0
+    property string objectName: ""
     property var modalityObject
     property var dataViewList: ([])
 
@@ -27,7 +28,7 @@ ColumnLayout {
     function initialize() {
         modalityObject = qMain.getObjectAt(objectIndex);
 
-        modalityNameText.text = modalityObject.getObjectName();
+        container.objectName = modalityObject.getObjectName();
     }
     //---------------------------------------------------------------------------
     //---------------------------------------------------------------------------
@@ -67,6 +68,13 @@ ColumnLayout {
                 dataViewList.push(imageView);
             }
         }
+    }
+    //---------------------------------------------------------------------------
+    //---------------------------------------------------------------------------
+    function showImageViewer(dataName) {
+        var imageViewer = Qt.createComponent("ImageViewer.qml").createObject(container);
+        imageViewer.setModalityImage(container.objectName, container.objectIndex, dataName);
+        imageViewer.show();
     }
     //---------------------------------------------------------------------------
     //---------------------------------------------------------------------------
@@ -128,6 +136,13 @@ ColumnLayout {
                 Layout.preferredHeight: 300
                 cache: false
                 fillMode: Image.PreserveAspectFit
+
+                MouseArea {
+                    anchors.fill: parent
+                    onDoubleClicked: {
+                        container.showImageViewer(dataName);
+                    }
+                }
             }
         }
     }
@@ -144,6 +159,7 @@ ColumnLayout {
             font.bold: true
             verticalAlignment: Text.AlignVCenter
             elide: Text.ElideRight
+            text: container.objectName
         }
     }
 

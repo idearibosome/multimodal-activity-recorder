@@ -33,6 +33,7 @@ public:
     void loadModalityData(qint64 dataPos);
     Q_INVOKABLE QVariantList getModalityDataList();
     QImage getModalityImageData(QString name);
+    Q_INVOKABLE void saveModalityImageData(QString name, QString savePath);
 
 signals:
 

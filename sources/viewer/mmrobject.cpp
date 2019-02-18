@@ -118,4 +118,9 @@ QImage MMRObject::getModalityImageData(QString name) {
     return QImage();
 }
 //---------------------------------------------------------------------------
+void MMRObject::saveModalityImageData(QString name, QString savePath) {
+    QImage image = getModalityImageData(name);
+    image.save(savePath);
+}
+//---------------------------------------------------------------------------
 //---------------------------------------------------------------------------

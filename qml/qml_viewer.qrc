@@ -2,5 +2,6 @@
     <qresource prefix="/qml">
         <file>viewer/main.qml</file>
         <file>viewer/Modality.qml</file>
+        <file>viewer/ImageViewer.qml</file>
     </qresource>
 </RCC>
