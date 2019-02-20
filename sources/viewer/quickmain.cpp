@@ -3,6 +3,7 @@
 #include "mmrobject.h"
 
 #include "../shared/irqm/irqmsignalhandler.h"
+#include "../shared/irqm/irqmpathhelper.h"
 
 #include "../shared/mmrfilemetadata.h"
 
@@ -120,6 +121,90 @@ void QuickMain::destroyMMRObjects() {
 //---------------------------------------------------------------------------
 qint64 QuickMain::getCurrentTimestamp() {
     return QDateTime::currentMSecsSinceEpoch();
+}
+//---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+void QuickMain::exportMMRData(QString exportPath) {
+    if (!fileMetadata) return;
+
+    for (auto object=objectList.begin(); object!=objectList.end(); ++object) {
+        QString identifier = (*object)->identifier;
+        QString modalityType = (*object)->modality->type;
+
+        QVariantList recordings = fileMetadata->getModalityRecordings(identifier);
+
+        QString modalityPath = IRQMPathHelper::concatenate(exportPath, modalityType+"_"+identifier);
+        QDir modalityPathDir(modalityPath);
+        if (!modalityPathDir.exists()) {
+            modalityPathDir.mkpath(".");
+        }
+
+        QString csvPath = IRQMPathHelper::concatenate(modalityPath, "data.csv");
+        QFile csvFile(csvPath);
+        csvFile.open(QFile::WriteOnly);
+
+        for (int i=0; i<recordings.count(); i++) {
+            qDebug() << identifier << i << recordings.count();
+            QVariantMap recording = recordings.at(i).toMap();
+
+            int recordingIdx = recording.value("recording_idx").toInt();
+            qint64 dataPos = recording.value("data_pos").toLongLong();
+            qint64 timestamp = recording.value("timestamp").toLongLong();
+
+            (*object)->loadModalityData(dataPos);
+
+            QVariantList dataList = (*object)->getModalityDataList();
+
+            // initial configuration: csv header, image directory
+            if (i == 0) {
+                QStringList csvHeaderList;
+                csvHeaderList.append("recording_idx");
+                csvHeaderList.append("timestamp");
+                for (int dataIndex=0; dataIndex<dataList.count(); dataIndex++) {
+                    QVariantMap data = dataList[dataIndex].toMap();
+                    QString dataName = data.value("name").toString();
+                    QString dataType = data.value("type").toString();
+
+                    if (dataType == "value") {
+                        csvHeaderList.append(dataName);
+                    }
+                    else if (dataType == "image") {
+                        QString modalityImagePath = IRQMPathHelper::concatenate(modalityPath, dataName);
+                        QDir modalityImagePathDir(modalityImagePath);
+                        if (!modalityImagePathDir.exists()) {
+                            modalityImagePathDir.mkpath(".");
+                        }
+                    }
+                }
+                csvFile.write(QString(csvHeaderList.join(",")+"\n").toUtf8());
+            }
+
+            // data
+            QStringList csvDataList;
+            csvDataList.append(QString("\"%1\"").arg(recordingIdx));
+            csvDataList.append(QString("\"%1\"").arg(timestamp));
+
+            for (int dataIndex=0; dataIndex<dataList.count(); dataIndex++) {
+                QVariantMap data = dataList[dataIndex].toMap();
+                QString dataName = data.value("name").toString();
+                QString dataType = data.value("type").toString();
+
+                if (dataType == "value") {
+                    csvDataList.append(QString("\"%1\"").arg(data.value("value").toString()));
+                }
+                else if (dataType == "image") {
+                    QString modalityImagePath = IRQMPathHelper::concatenate(modalityPath, dataName);
+                    QImage modalityImage = (*object)->getModalityImageData(dataName);
+                    modalityImage.save(IRQMPathHelper::concatenate(modalityImagePath, QString("%1.png").arg(timestamp)));
+                }
+            }
+
+            csvFile.write(QString(csvDataList.join(",")+"\n").toUtf8());
+        }
+
+        csvFile.close();
+    }
+
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------

@@ -146,6 +146,30 @@ Window {
                     }
                 }
             }
+            Button {
+                id: exportButton
+                text: "Export"
+                onClicked: {
+                    exportDialog.open();
+                }
+
+                FileDialog {
+                    id: exportDialog
+                    selectFolder: true
+                    onAccepted: {
+                        var path = fileUrl.toString();
+                        if (path.startsWith("file:///")) {
+                            path = path.replace(/^(file:\/{3})/,"");
+                        }
+                        else if (path.startsWith("file:")) {
+                            path = path.replace(/^(file:)/,"");
+                        }
+                        path = decodeURIComponent(path);
+
+                        qMain.exportMMRData(path);
+                    }
+                }
+            }
 
         }
         Rectangle {

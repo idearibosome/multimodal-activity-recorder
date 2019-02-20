@@ -36,6 +36,7 @@ public:
     Q_INVOKABLE QVariantList getModalities();
     Q_INVOKABLE qint64 getLength();
     Q_INVOKABLE qint64 getModalityDataPos(QString identifier, qint64 timestamp);
+    QVariantList getModalityRecordings(QString identifier);
 
     void createToFileDirPath(QString path, bool inMemoryMode);
     void addModality(QString type, QString identifier, QVariantMap configuration);

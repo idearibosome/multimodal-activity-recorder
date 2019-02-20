@@ -117,6 +117,29 @@ qint64 MMRFileMetadata::getModalityDataPos(QString identifier, qint64 timestamp)
     return dataPos;
 }
 //---------------------------------------------------------------------------
+QVariantList MMRFileMetadata::getModalityRecordings(QString identifier) {
+    if (!db) return QVariantList();
+
+    if (!modalityIdentifierToIdxMap.contains(identifier)) return QVariantList();
+    int modalityIdx = modalityIdentifierToIdxMap.value(identifier);
+
+    QVariantList recordings;
+
+    QString query = "SELECT * FROM recordings WHERE modality_idx = ? ORDER BY timestamp ASC";
+    sqlite3_stmt *stmt = IRQMSQLiteHelper::prepare(db, query);
+    IRQMSQLiteHelper::bindValue(stmt, 1, modalityIdx);
+
+    while (sqlite3_step(stmt) == SQLITE_ROW) {
+        QVariantMap row = IRQMSQLiteHelper::fetchRow(stmt);
+
+        recordings.append(row);
+    }
+
+    sqlite3_finalize(stmt);
+
+    return recordings;
+}
+//---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
 void MMRFileMetadata::createToFileDirPath(QString path, bool inMemoryMode) {
     if (db) return;
