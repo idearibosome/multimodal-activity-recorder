@@ -10,7 +10,8 @@
 
 class MMRWSData;
 class MMRFileMetadata;
-class MMRConnection;
+class MMRModalityConnection;
+class MMRRecognizerConnection;
 
 class MMRServer : public QObject
 {
@@ -20,7 +21,7 @@ public:
 
     void log(QString text);
 
-    Q_INVOKABLE void startServer(int port);
+    Q_INVOKABLE void startServer(int modalityPort, int recognizerPort);
     Q_INVOKABLE void stopServer();
 
     Q_INVOKABLE void setStorageBasePath(QString path);
@@ -30,33 +31,44 @@ public:
     Q_INVOKABLE void stopModalityAcquisition();
     Q_INVOKABLE void finalizeModalities();
 
-    void sendRequest(MMRWSData *wsData);
+    void sendModalityRequest(MMRWSData *wsData);
 
 private:
-    QWebSocketServer *wsServer = 0;
-    QList<MMRConnection *> connections;
+    QWebSocketServer *wsModalityServer = nullptr;
+    QWebSocketServer *wsRecognizerServer = nullptr;
+    QList<MMRModalityConnection *> modalityConnections;
+    QList<MMRRecognizerConnection *> recognizerConnections;
 
     MMRFileMetadata *fileMetadata = NULL;
 
     QString storageBasePath;
 
-    void initializeWsServer();
+    void initializeWsModalityServer();
+    void initializeWsRecognizerServer();
 
     void prepareFileMetadata();
     void finalizeFileMetadata();
 
 signals:
-    void prepare(MMRFileMetadata *fileMetadata);
-    void start();
-    void stop();
-    void finalize();
+    void modalityPrepare(MMRFileMetadata *fileMetadata);
+    void modalityStart();
+    void modalityStop();
+    void modalityFinalize();
+    void recognizerPrepare();
+    void recognizerStart();
+    void recognizerStop();
+    void recognizerFinalize();
 
 private slots:
-    void slotWsServerNewConnection();
-    void slotConnectionDisconnected();
+    void slotWsModalityServerNewConnection();
+    void slotWsRecognizerServerNewConnection();
+    void slotModalityConnectionDisconnected();
+    void slotRecognizerConnectionDisconnected();
 
-    void slotConnectionSendBinaryMessage(QWebSocket *ws, QByteArray message);
-    void slotConnectionCloseWebSocket(QWebSocket *ws);
+    void slotModalityConnectionSendBinaryMessage(QWebSocket *ws, QByteArray message);
+    void slotModalityConnectionCloseWebSocket(QWebSocket *ws);
+    void slotRecognizerConnectionSendBinaryMessage(QWebSocket *ws, QByteArray message);
+    void slotRecognizerConnectionCloseWebSocket(QWebSocket *ws);
 
 };
 

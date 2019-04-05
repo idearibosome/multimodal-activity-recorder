@@ -1,6 +1,7 @@
 #include "mmrserver.h"
 
-#include "mmrconnection.h"
+#include "mmrmodalityconnection.h"
+#include "mmrrecognizerconnection.h"
 
 #include "../shared/irqm/irqmsignalhandler.h"
 
@@ -9,59 +10,107 @@
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
 MMRServer::MMRServer(QObject *parent) : QObject(parent) {
-    initializeWsServer();
+    initializeWsModalityServer();
+    initializeWsRecognizerServer();
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
-void MMRServer::slotWsServerNewConnection() {
-    QWebSocket *socket = wsServer->nextPendingConnection();
+void MMRServer::slotWsModalityServerNewConnection() {
+    QWebSocket *socket = wsModalityServer->nextPendingConnection();
 
-    MMRConnection *connection = new MMRConnection();
+    MMRModalityConnection *connection = new MMRModalityConnection();
     connection->storageBasePath = storageBasePath;
     connection->setWebSocket(socket);
 
     QThread *connectionThread = new QThread(this);
     connection->moveToThread(connectionThread);
 
-    QObject::connect(this, SIGNAL(prepare(MMRFileMetadata*)), connection, SLOT(slotPrepare(MMRFileMetadata*)));
-    QObject::connect(this, SIGNAL(start()), connection, SLOT(slotStart()));
-    QObject::connect(this, SIGNAL(stop()), connection, SLOT(slotStop()));
-    QObject::connect(this, SIGNAL(finalize()), connection, SLOT(slotFinalize()));
+    QObject::connect(this, SIGNAL(modalityPrepare(MMRFileMetadata*)), connection, SLOT(slotPrepare(MMRFileMetadata*)));
+    QObject::connect(this, SIGNAL(modalityStart()), connection, SLOT(slotStart()));
+    QObject::connect(this, SIGNAL(modalityStop()), connection, SLOT(slotStop()));
+    QObject::connect(this, SIGNAL(modalityFinalize()), connection, SLOT(slotFinalize()));
 
-    QObject::connect(connection, SIGNAL(sendBinaryMessage(QWebSocket*,QByteArray)), this, SLOT(slotConnectionSendBinaryMessage(QWebSocket*,QByteArray)));
-    QObject::connect(connection, SIGNAL(closeWebSocket(QWebSocket*)), this, SLOT(slotConnectionCloseWebSocket(QWebSocket*)));
+    QObject::connect(connection, SIGNAL(sendBinaryMessage(QWebSocket*,QByteArray)), this, SLOT(slotModalityConnectionSendBinaryMessage(QWebSocket*,QByteArray)));
+    QObject::connect(connection, SIGNAL(closeWebSocket(QWebSocket*)), this, SLOT(slotModalityConnectionCloseWebSocket(QWebSocket*)));
 
-    QObject::connect(connection, SIGNAL(disconnected()), this, SLOT(slotConnectionDisconnected()));
+    QObject::connect(connection, SIGNAL(disconnected()), this, SLOT(slotModalityConnectionDisconnected()));
     QObject::connect(connection, SIGNAL(disconnected()), connectionThread, SLOT(quit()));
     QObject::connect(connectionThread, SIGNAL(finished()), connectionThread, SLOT(deleteLater()));
 
-    connections.append(connection);
+    modalityConnections.append(connection);
+
+    connectionThread->start();
+}
+//---------------------------------------------------------------------------
+void MMRServer::slotWsRecognizerServerNewConnection() {
+    QWebSocket *socket = wsRecognizerServer->nextPendingConnection();
+
+    MMRRecognizerConnection *connection = new MMRRecognizerConnection();
+    connection->setWebSocket(socket);
+
+    QThread *connectionThread = new QThread(this);
+    connection->moveToThread(connectionThread);
+
+    QObject::connect(this, SIGNAL(recognizerPrepare()), connection, SLOT(slotPrepare()));
+    QObject::connect(this, SIGNAL(recognizerStart()), connection, SLOT(slotStart()));
+    QObject::connect(this, SIGNAL(recognizerStop()), connection, SLOT(slotStop()));
+    QObject::connect(this, SIGNAL(recognizerFinalize()), connection, SLOT(slotFinalize()));
+
+    QObject::connect(connection, SIGNAL(sendBinaryMessage(QWebSocket*,QByteArray)), this, SLOT(slotRecognizerConnectionSendBinaryMessage(QWebSocket*,QByteArray)));
+    QObject::connect(connection, SIGNAL(closeWebSocket(QWebSocket*)), this, SLOT(slotRecognizerConnectionCloseWebSocket(QWebSocket*)));
+
+    QObject::connect(connection, SIGNAL(disconnected()), this, SLOT(slotRecognizerConnectionDisconnected()));
+    QObject::connect(connection, SIGNAL(disconnected()), connectionThread, SLOT(quit()));
+    QObject::connect(connectionThread, SIGNAL(finished()), connectionThread, SLOT(deleteLater()));
+
+    recognizerConnections.append(connection);
 
     connectionThread->start();
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
-void MMRServer::slotConnectionDisconnected() {
-    MMRConnection *connection = qobject_cast<MMRConnection *>(sender());
+void MMRServer::slotModalityConnectionDisconnected() {
+    MMRModalityConnection *connection = qobject_cast<MMRModalityConnection *>(sender());
     connection->deleteLater();
 
-    connections.removeAll(connection);
+    modalityConnections.removeAll(connection);
+}
+//---------------------------------------------------------------------------
+void MMRServer::slotRecognizerConnectionDisconnected() {
+    MMRRecognizerConnection *connection = qobject_cast<MMRRecognizerConnection *>(sender());
+    connection->deleteLater();
+
+    recognizerConnections.removeAll(connection);
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
-void MMRServer::slotConnectionSendBinaryMessage(QWebSocket *ws, QByteArray message) {
+void MMRServer::slotModalityConnectionSendBinaryMessage(QWebSocket *ws, QByteArray message) {
     ws->sendBinaryMessage(message);
 }
 //---------------------------------------------------------------------------
-void MMRServer::slotConnectionCloseWebSocket(QWebSocket *ws) {
+void MMRServer::slotRecognizerConnectionSendBinaryMessage(QWebSocket *ws, QByteArray message) {
+    ws->sendBinaryMessage(message);
+}
+//---------------------------------------------------------------------------
+void MMRServer::slotModalityConnectionCloseWebSocket(QWebSocket *ws) {
+    ws->close();
+}
+//---------------------------------------------------------------------------
+void MMRServer::slotRecognizerConnectionCloseWebSocket(QWebSocket *ws) {
     ws->close();
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
-void MMRServer::initializeWsServer() {
-    wsServer = new QWebSocketServer("MMRServer", QWebSocketServer::NonSecureMode, this);
+void MMRServer::initializeWsModalityServer() {
+    wsModalityServer = new QWebSocketServer("MMRServer", QWebSocketServer::NonSecureMode, this);
 
-    QObject::connect(wsServer, SIGNAL(newConnection()), this, SLOT(slotWsServerNewConnection()));
+    QObject::connect(wsModalityServer, SIGNAL(newConnection()), this, SLOT(slotWsModalityServerNewConnection()));
+}
+//---------------------------------------------------------------------------
+void MMRServer::initializeWsRecognizerServer() {
+    wsRecognizerServer = new QWebSocketServer("MMRServer_Recognizer", QWebSocketServer::NonSecureMode, this);
+
+    QObject::connect(wsRecognizerServer, SIGNAL(newConnection()), this, SLOT(slotWsRecognizerServerNewConnection()));
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
@@ -70,31 +119,51 @@ void MMRServer::log(QString text) {
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
-void MMRServer::startServer(int port) {
-    if (wsServer->isListening()) return;
-
-    bool res = wsServer->listen(QHostAddress::Any, port);
-    if (res) { // success
-        this->log(QString("ws: Listening (%1)").arg(port));
-        IRQMSignalHandler::sendSignal("mmrserver", "listening");
+void MMRServer::startServer(int modalityPort, int recognizerPort) {
+    if (!wsModalityServer->isListening() && modalityPort > 0) {
+        bool res = wsModalityServer->listen(QHostAddress::Any, modalityPort);
+        if (res) { // success
+            this->log(QString("ws (modality): Listening (%1)").arg(modalityPort));
+            IRQMSignalHandler::sendSignal("mmrserver", "listening");
+        }
+        else {
+            this->log(QString("ws (modality): Failed to start listening (%1)").arg(modalityPort));
+            IRQMSignalHandler::sendSignal("mmrserver", "listeningFailed");
+        }
     }
-    else {
-        this->log(QString("ws: Failed to start listening (%1)").arg(port));
-        IRQMSignalHandler::sendSignal("mmrserver", "listeningFailed");
+
+    if (!wsRecognizerServer->isListening() && recognizerPort > 0) {
+        bool res = wsRecognizerServer->listen(QHostAddress::Any, recognizerPort);
+        if (res) { // success
+            this->log(QString("ws (recognizer): Listening (%1)").arg(recognizerPort));
+            IRQMSignalHandler::sendSignal("mmrserver", "listening");
+        }
+        else {
+            this->log(QString("ws (recognizer): Failed to start listening (%1)").arg(recognizerPort));
+            IRQMSignalHandler::sendSignal("mmrserver", "listeningFailed");
+        }
     }
 }
 //---------------------------------------------------------------------------
 void MMRServer::stopServer() {
-    if (!wsServer->isListening()) return;
+    if (wsModalityServer->isListening()) {
+        wsModalityServer->close();
 
-    wsServer->close();
+        QList<MMRModalityConnection *> connections = this->modalityConnections;
+        for (auto connection=modalityConnections.begin(); connection!=modalityConnections.end(); ++connection) {
+            (*connection)->close();
+        }
 
-    QList<MMRConnection *> connections = this->connections;
-    for (auto connection=connections.begin(); connection!=connections.end(); ++connection) {
-        (*connection)->close();
+        this->log("ws (modality): Stopped");
+    }
+    if (wsRecognizerServer->isListening()) {
+        wsRecognizerServer->close();
+
+        // TODO
+
+        this->log("ws (recognizer): Stopped");
     }
 
-    this->log("ws: Stopped");
     IRQMSignalHandler::sendSignal("mmrserver", "stopped");
 }
 //---------------------------------------------------------------------------
@@ -109,29 +178,33 @@ void MMRServer::prepareModalities() {
     this->log("ws: Prepare modalities");
     prepareFileMetadata();
 
-    emit prepare(fileMetadata);
+    emit modalityPrepare(fileMetadata);
+    emit recognizerPrepare();
 }
 //---------------------------------------------------------------------------
 void MMRServer::startModalityAcquisition() {
     this->log("ws: Start data acquisition");
-    emit start();
+    emit modalityStart();
+    emit recognizerStart();
 }
 //---------------------------------------------------------------------------
 void MMRServer::stopModalityAcquisition() {
     this->log("ws: Stop data acquisition");
-    emit stop();
+    emit modalityStop();
+    emit recognizerStop();
 }
 //---------------------------------------------------------------------------
 void MMRServer::finalizeModalities() {
     this->log("ws: Finalize modalities");
-    emit finalize();
+    emit modalityFinalize();
+    emit recognizerFinalize();
 
     finalizeFileMetadata();
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
-void MMRServer::sendRequest(MMRWSData *data) {
-    for (auto connection=connections.begin(); connection!=connections.end(); ++connection) {
+void MMRServer::sendModalityRequest(MMRWSData *data) {
+    for (auto connection=modalityConnections.begin(); connection!=modalityConnections.end(); ++connection) {
         (*connection)->sendRequest(data);
     }
 }
@@ -139,6 +212,7 @@ void MMRServer::sendRequest(MMRWSData *data) {
 //---------------------------------------------------------------------------
 void MMRServer::prepareFileMetadata() {
     if (fileMetadata) return;
+    if (storageBasePath.isEmpty()) return;
 
     fileMetadata = new MMRFileMetadata(this);
 

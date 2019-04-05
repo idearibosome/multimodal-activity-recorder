@@ -18,7 +18,9 @@ Window {
     property TextArea logTextArea
 
     property ListModel modalityListModel
+    property ListModel recognizerListModel
     property var modalityList: ([])
+    property var recognizerList: ([])
 
     property bool isConnectionOperating: false
     property bool isRunning: false
@@ -30,9 +32,10 @@ Window {
         IRQM.SignalHandler.bindSignal("mmrserver", "listeningFailed", this, "serverListeningFailed");
         IRQM.SignalHandler.bindSignal("mmrserver", "stopped", this, "serverStopped");
 
-        IRQM.SignalHandler.bindSignal("mmrconnection", "registered", this, "connectionRegistered");
-        IRQM.SignalHandler.bindSignal("mmrconnection", "receivedData", this, "connectionReceivedData");
-        IRQM.SignalHandler.bindSignal("mmrconnection", "disconnected", this, "connectionDisconnected");
+        IRQM.SignalHandler.bindSignal("mmrconnection", "modalityRegistered", this, "modalityConnectionRegistered");
+        IRQM.SignalHandler.bindSignal("mmrconnection", "recognizerRegistered", this, "recognizerConnectionRegistered");
+        IRQM.SignalHandler.bindSignal("mmrconnection", "modalityDisconnected", this, "modalityConnectionDisconnected");
+        IRQM.SignalHandler.bindSignal("mmrconnection", "recognizerDisconnected", this, "recognizerConnectionDisconnected");
     }
 
     Component.onDestruction: {
@@ -61,16 +64,19 @@ Window {
     }
     //---------------------------------------------------------------------------
     //---------------------------------------------------------------------------
-    function connectionRegistered(type, identifier) {
+    function modalityConnectionRegistered(type, identifier) {
         modalityList.push({"type": type, "identifier": identifier});
         var text = type + " (" + identifier + ")";
         modalityListModel.append({"text": text});
     }
     //---------------------------------------------------------------------------
-    function connectionReceivedData(identifier, size) {
+    function recognizerConnectionRegistered(name, identifier) {
+        recognizerList.push({"name": name, "identifier": identifier});
+        var text = name + " (" + identifier + ")";
+        recognizerListModel.append({"text": text});
     }
     //---------------------------------------------------------------------------
-    function connectionDisconnected(type, identifier) {
+    function modalityConnectionDisconnected(type, identifier) {
         var modalityIndex = -1;
         for (var i in modalityList) {
             if (modalityList[i]["identifier"] === identifier) {
@@ -82,6 +88,21 @@ Window {
         if (modalityIndex >= 0) {
             modalityList.splice(modalityIndex, 1);
             modalityListModel.remove(modalityIndex);
+        }
+    }
+    //---------------------------------------------------------------------------
+    function recognizerConnectionDisconnected(name, identifier) {
+        var recognizerIndex = -1;
+        for (var i in recognizerList) {
+            if (recognizerList[i]["identifier"] === identifier) {
+                recognizerIndex = i;
+                break;
+            }
+        }
+
+        if (recognizerIndex >= 0) {
+            recognizerList.splice(recognizerIndex, 1);
+            recognizerListModel.remove(recognizerIndex);
         }
     }
     //---------------------------------------------------------------------------
@@ -140,13 +161,22 @@ Window {
                         }
 
                         Text {
-                            text: "Port: "
+                            text: "Port (Modality):"
                         }
                         TextField {
-                            id: serverPortTextField
-                            Layout.preferredWidth: 100
+                            id: serverModalityPortTextField
+                            Layout.preferredWidth: 60
                             inputMethodHints: Qt.ImhDigitsOnly
                             text: "8880"
+                        }
+                        Text {
+                            text: "Port (Recognizer):"
+                        }
+                        TextField {
+                            id: serverRecognizerPortTextField
+                            Layout.preferredWidth: 60
+                            inputMethodHints: Qt.ImhDigitsOnly
+                            text: "8881"
                         }
                         Button {
                             id: startServerButton
@@ -156,7 +186,7 @@ Window {
 
                             onClicked: {
                                 container.isConnectionOperating = true;
-                                mServer.startServer(Number(serverPortTextField.text));
+                                mServer.startServer(Number(serverModalityPortTextField.text), Number(serverRecognizerPortTextField.text));
                             }
                         }
                         Button {
@@ -202,6 +232,30 @@ Window {
 
                                     Component.onCompleted: {
                                         container.modalityListModel = modalityListModel;
+                                    }
+                                }
+                            }
+
+                            Text {
+                                Layout.preferredWidth: parent.width
+                                horizontalAlignment: Text.AlignHCenter
+                                text: "Recognizers"
+                            }
+                            TableView {
+                                id: recognizerListView
+                                Layout.preferredWidth: parent.width
+                                Layout.fillHeight: true
+                                Layout.minimumHeight: 100
+                                headerVisible: false
+                                alternatingRowColors: false
+                                TableViewColumn {
+                                    role: "text"
+                                }
+                                model: ListModel {
+                                    id: recognizerListModel
+
+                                    Component.onCompleted: {
+                                        container.recognizerListModel = recognizerListModel;
                                     }
                                 }
                             }

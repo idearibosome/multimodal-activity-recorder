@@ -51,12 +51,14 @@ RESOURCES += \
 HEADERS += \
     $$PWD/sources/server/main.h \
     $$PWD/sources/server/mmrserver.h \
-    sources/server/mmrconnection.h
+    sources/server/mmrmodalityconnection.h \
+    sources/server/mmrrecognizerconnection.h
 
 SOURCES += \
     $$PWD/sources/server/main.cpp \
     $$PWD/sources/server/mmrserver.cpp \
-    sources/server/mmrconnection.cpp
+    sources/server/mmrmodalityconnection.cpp \
+    sources/server/mmrrecognizerconnection.cpp
 
 QML_IMPORT_PATH =
 
