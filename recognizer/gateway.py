@@ -86,8 +86,8 @@ def wsRecognize(data):
     for subitem in item:
       if (subitem['type'] == 'value'):
         new_item[subitem['name']] = subitem['value']
-      elif (subitem['type'] == 'image'):
-        new_item[subitem['name']] = subitem['image'].data()
+      elif (subitem['type'] == 'byte_array'):
+        new_item[subitem['name']] = subitem['byte_array'].data()
     new_data[modality_identifier_to_name_dict[identifier]] = new_item
   return model.recognize(new_data)
 

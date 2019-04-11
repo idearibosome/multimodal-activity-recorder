@@ -28,6 +28,16 @@ QVariant Modality::parsedDataItemWithValue(QString name, QVariant value) {
     return itemMap;
 }
 //---------------------------------------------------------------------------
+QVariant Modality::parsedDataItemWithByteArray(QString name, QByteArray byteArray) {
+    QVariantMap itemMap;
+
+    itemMap.insert("name", name);
+    itemMap.insert("type", "byte_array");
+    itemMap.insert("byte_array", byteArray);
+
+    return itemMap;
+}
+//---------------------------------------------------------------------------
 QVariant Modality::parsedDataItemWithImage(QString name, QImage image) {
     QVariantMap itemMap;
 

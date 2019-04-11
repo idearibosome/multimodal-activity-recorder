@@ -34,6 +34,7 @@ public:
 
     virtual QVariantList parseData(QByteArray data, EModalityParseType parseType = ParseType_Viewer) = 0;
     static QVariant parsedDataItemWithValue(QString name, QVariant value);
+    static QVariant parsedDataItemWithByteArray(QString name, QByteArray byteArray);
     static QVariant parsedDataItemWithImage(QString name, QImage image);
 
     qint64 getTimestamp();
