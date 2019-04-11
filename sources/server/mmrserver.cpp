@@ -46,6 +46,7 @@ void MMRServer::slotWsRecognizerServerNewConnection() {
     QWebSocket *socket = wsRecognizerServer->nextPendingConnection();
 
     MMRRecognizerConnection *connection = new MMRRecognizerConnection();
+    connection->server = this;
     connection->setWebSocket(socket);
 
     QThread *connectionThread = new QThread(this);

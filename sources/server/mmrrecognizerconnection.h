@@ -12,6 +12,8 @@ class MMRRecognizerConnection : public QObject
 public:
     explicit MMRRecognizerConnection(QObject *parent = nullptr);
 
+    MMRServer *server = nullptr;
+
     QWebSocket *ws = NULL;
 
     QString name;
