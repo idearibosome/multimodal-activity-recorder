@@ -101,7 +101,7 @@ def wsFinalize():
 # run websocket
 async def run():
   print('- connecting...')
-  async with websockets.connect(config['server']['url']) as websocket:
+  async with websockets.connect(config['server']['url'], max_size=(2**32)) as websocket:
     wsData = MMRWSData()
     wsData.requestType = 'register'
     wsData.dataType = 'request'
