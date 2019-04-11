@@ -1,13 +1,21 @@
 #include "mmrrecognizerconnection.h"
 
+#include "../shared/irqm/irqmjsonhelper.h"
 #include "../shared/irqm/irqmsignalhandler.h"
 
+#include "../shared/modality/modality.h"
+#include "../shared/modality/modalityconfigurator.h"
+
 #include "../shared/mmrwsdata.h"
+
+#include "mmrserver.h"
+#include "mmrmodalityconnection.h"
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
 MMRRecognizerConnection::MMRRecognizerConnection(QObject *parent) : QObject(parent) {
     name = "";
     identifier = "";
+    fps = 0;
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
@@ -17,6 +25,9 @@ void MMRRecognizerConnection::slotWsBinaryMessageReceived(QByteArray message) {
 
     if (wsData->dataType == "request") {
         handleRequest(wsData);
+    }
+    else if (wsData->dataType == "response") {
+        handleResponse(wsData);
     }
 }
 //---------------------------------------------------------------------------
@@ -46,6 +57,11 @@ void MMRRecognizerConnection::slotStop() {
 //---------------------------------------------------------------------------
 void MMRRecognizerConnection::slotFinalize() {
     finalize();
+}
+//---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+void MMRRecognizerConnection::slotRecognizerTimerFired() {
+    recognize();
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
@@ -80,9 +96,48 @@ void MMRRecognizerConnection::start() {
     sendRequest(data);
 
     data->deleteLater();
+
+    // start timer
+    recognizerTimer = new QTimer(this);
+    QObject::connect(recognizerTimer, SIGNAL(timeout()), this, SLOT(slotRecognizerTimerFired()));
+    int msec = 1000 / fps;
+    recognizerTimer->start(msec);
+}
+//---------------------------------------------------------------------------
+void MMRRecognizerConnection::recognize() {
+    if (!server) return;
+
+    QVariantMap recognitionData;
+
+    foreach (QString modalityIdentifier, registeredModalityList) {
+        MMRModalityConnection *connection = server->modalityConnectionForIdentifier(identifier);
+        if (!connection) continue;
+        if (connection->lastData.isEmpty()) continue;
+
+        Modality *modality = ModalityConfigurator::modalityForType(connection->type);
+        if (!modality) continue;
+
+        recognitionData.insert(modalityIdentifier, modality->parseData(connection->lastData, Modality::ParseType_Recognizer));
+    }
+
+    MMRWSData *data = new MMRWSData();
+    data->requestType = "recognize";
+    data->dataType = "request";
+    data->data = recognitionData;
+
+    sendRequest(data);
+
+    data->deleteLater();
 }
 //---------------------------------------------------------------------------
 void MMRRecognizerConnection::stop() {
+    // stop timer
+    if (recognizerTimer) {
+        recognizerTimer->stop();
+        recognizerTimer->deleteLater();
+        recognizerTimer = nullptr;
+    }
+
     MMRWSData *data = new MMRWSData();
     data->requestType = "stop";
     data->dataType = "request";
@@ -125,7 +180,8 @@ void MMRRecognizerConnection::handleRequest(MMRWSData *wsData) {
 void MMRRecognizerConnection::handleRequestRegister(QString type, QVariantMap data) {
     this->name = data.value("name").toString();
     this->identifier = data.value("identifier").toString();
-    // TODO: modalityList
+    this->registeredModalityList = data.value("modalities").toStringList();
+    this->fps = data.value("fps").toDouble();
 
     log("registered (" + this->name + ", " + this->identifier + ")");
     IRQMSignalHandler::sendSignal("mmrconnection", "recognizerRegistered", this->name, this->identifier);
@@ -136,6 +192,24 @@ void MMRRecognizerConnection::handleRequestRegister(QString type, QVariantMap da
     wsData.data.insert("result", QString("ok"));
 
     emit sendBinaryMessage(ws, wsData.toByteArray());
+}
+//---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+void MMRRecognizerConnection::handleResponse(MMRWSData *wsData) {
+    if (!ws) return;
+
+    QString type = wsData->requestType;
+    QVariantMap data = wsData->data;
+
+    if (type == "recognize") handleResponseRecognize(type, data);
+
+    wsData->deleteLater();
+}
+//---------------------------------------------------------------------------
+void MMRRecognizerConnection::handleResponseRecognize(QString type, QVariantMap data) {
+    QString dataString = IRQMJSONHelper::JSONObjectToString(data);
+
+    log("recognized (" + this->name + ", " + this->identifier + ") - " + dataString);
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
