@@ -18,7 +18,7 @@ void Modality::reset() {
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
-QVariantMap Modality::parsedDataItemWithValue(QString name, QVariant value) {
+QVariant Modality::parsedDataItemWithValue(QString name, QVariant value) {
     QVariantMap itemMap;
 
     itemMap.insert("name", name);
@@ -28,7 +28,7 @@ QVariantMap Modality::parsedDataItemWithValue(QString name, QVariant value) {
     return itemMap;
 }
 //---------------------------------------------------------------------------
-QVariantMap Modality::parsedDataItemWithImage(QString name, QImage image) {
+QVariant Modality::parsedDataItemWithImage(QString name, QImage image) {
     QVariantMap itemMap;
 
     itemMap.insert("name", name);

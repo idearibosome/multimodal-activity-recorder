@@ -159,7 +159,7 @@ void ModalityQtSensor::stopAcquisition() {
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
-QVariantList ModalityQtSensor::parseData(QByteArray data) {
+QVariantList ModalityQtSensor::parseData(QByteArray data, EModalityParseType parseType) {
     QVariantList parsedDataList;
 
     QDataStream inStream(&data, QIODevice::ReadOnly);

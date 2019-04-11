@@ -242,7 +242,7 @@ void ModalityKinect::stopAcquisition() {
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
-QVariantList ModalityKinect::parseData(QByteArray data) {
+QVariantList ModalityKinect::parseData(QByteArray data, EModalityParseType parseType) {
     QVariantList parsedDataList;
 
     QDataStream inStream(&data, QIODevice::ReadOnly);
@@ -253,16 +253,26 @@ QVariantList ModalityKinect::parseData(QByteArray data) {
 
     inStream >> colorFrameWidth >> colorFrameHeight >> colorData;
 
-    QImage colorImage = QImage((const uchar *)colorData.constData(), colorFrameWidth, colorFrameHeight, QImage::Format_RGB888).copy();
-    parsedDataList.append(Modality::parsedDataItemWithImage("color", colorImage));
+    if (parseType == ParseType_Viewer) {
+        QImage colorImage = QImage((const uchar *)colorData.constData(), colorFrameWidth, colorFrameHeight, QImage::Format_RGB888).copy();
+        parsedDataList.append(Modality::parsedDataItemWithImage("color", colorImage));
+    }
+    else {
+        parsedDataList.append(Modality::parsedDataItemWithValue("color", colorData));
+    }
 
     int depthFrameWidth, depthFrameHeight;
     QByteArray depthData;
 
     inStream >> depthFrameWidth >> depthFrameHeight >> depthData;
 
-    QImage depthImage = QImage((const uchar *)depthData.constData(), depthFrameWidth, depthFrameHeight, QImage::Format_RGB16).copy();
-    parsedDataList.append(Modality::parsedDataItemWithImage("depth", depthImage));
+    if (parseType == ParseType_Viewer) {
+        QImage depthImage = QImage((const uchar *)depthData.constData(), depthFrameWidth, depthFrameHeight, QImage::Format_RGB16).copy();
+        parsedDataList.append(Modality::parsedDataItemWithImage("depth", depthImage));
+    }
+    else {
+        parsedDataList.append(Modality::parsedDataItemWithValue("depth", depthData));
+    }
 
     return parsedDataList;
 }

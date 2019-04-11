@@ -75,7 +75,7 @@ public:
     bool startAcquisition() override;
     void stopAcquisition() override;
 
-    QVariantList parseData(QByteArray data) override;
+    QVariantList parseData(QByteArray data, EModalityParseType parseType) override;
 
 private slots:
     void slotKinectThreadAcquired(qint64 timestamp, QByteArray data);

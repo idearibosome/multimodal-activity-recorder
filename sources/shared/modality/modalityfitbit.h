@@ -28,7 +28,7 @@ public:
     bool startAcquisition() override;
     void stopAcquisition() override;
 
-    QVariantList parseData(QByteArray data) override;
+    QVariantList parseData(QByteArray data, EModalityParseType parseType) override;
 
     Q_INVOKABLE void startServer(int port);
     Q_INVOKABLE void stopServer();

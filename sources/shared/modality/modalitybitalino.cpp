@@ -298,7 +298,7 @@ void ModalityBITalino::stopAcquisition() {
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
-QVariantList ModalityBITalino::parseData(QByteArray data) {
+QVariantList ModalityBITalino::parseData(QByteArray data, EModalityParseType parseType) {
     QVariantList parsedDataList;
 
     QDataStream inStream(&data, QIODevice::ReadOnly);

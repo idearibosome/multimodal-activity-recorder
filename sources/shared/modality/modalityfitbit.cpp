@@ -45,7 +45,7 @@ void ModalityFitbit::stopAcquisition() {
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
-QVariantList ModalityFitbit::parseData(QByteArray data) {
+QVariantList ModalityFitbit::parseData(QByteArray data, EModalityParseType parseType) {
     QVariantList parsedDataList;
 
     QDataStream inStream(&data, QIODevice::ReadOnly);
