@@ -52,7 +52,20 @@ QVariantList ModalityFitbit::parseData(QByteArray data) {
     inStream.setVersion(QDataStream::Qt_5_9);
 
     QVariantMap parsedData;
-    inStream >> parsedData;
+
+    // v0.5.0: parse data with QVariant first, then QVariantMap for backward compatibility
+    inStream.startTransaction();
+    QVariant parsedDataVariant;
+    inStream >> parsedDataVariant;
+    if (parsedDataVariant.isValid() && parsedDataVariant.type() == QMetaType::QVariantMap) {
+        qDebug() << parsedDataVariant.type();
+        inStream.commitTransaction();
+        parsedData = parsedDataVariant.toMap();
+    }
+    else {
+        inStream.rollbackTransaction();
+        inStream >> parsedData;
+    }
 
     if (parsedData.contains("accel")) {
         QVariantMap currentMap = parsedData.value("accel").toMap();
@@ -135,7 +148,7 @@ void ModalityFitbit::processAcquiredData(QByteArray data) {
         QDataStream outStream(&byteArray, QIODevice::WriteOnly);
         outStream.setVersion(QDataStream::Qt_5_9);
 
-        outStream << parsedData;
+        outStream << QVariant(parsedData);
 
         emit acquired(acquisitionTimestamp, byteArray);
     }
