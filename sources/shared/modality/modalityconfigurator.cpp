@@ -36,4 +36,35 @@ void ModalityConfigurator::registerModules(QQmlApplicationEngine *engine) {
 #endif
 }
 //------------------------------------------------------------------------------
+Modality *ModalityConfigurator::modalityForType(QString type, QObject *parent) {
+    Modality *modality = nullptr;
+
+#if defined(MMR_MODALITY_KINECT)
+    if (type == "kinect") {
+        modality = new ModalityKinect(parent);
+    }
+#endif
+#if defined(MMR_MODALITY_QTSENSOR)
+    if (type == "qtsensor") {
+        modality = new ModalityQtSensor(parent);
+    }
+#endif
+#if defined(MMR_MODALITY_BITALINO)
+    if (type == "bitalino") {
+        modality = new ModalityBITalino(parent);
+    }
+#endif
+#if defined(MMR_MODALITY_FITBIT)
+    if (type == "fitbit") {
+        modality = new ModalityFitbit(parent);
+    }
+#endif
+
+    if (!modality) return modality;
+
+    modality->type = type;
+
+    return modality;
+}
+//------------------------------------------------------------------------------
 //------------------------------------------------------------------------------

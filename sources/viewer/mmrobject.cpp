@@ -1,10 +1,7 @@
 #include "mmrobject.h"
 
 #include "../shared/modality/modality.h"
-#include "../shared/modality/modalitykinect.h"
-#include "../shared/modality/modalityqtsensor.h"
-#include "../shared/modality/modalitybitalino.h"
-#include "../shared/modality/modalityfitbit.h"
+#include "../shared/modality/modalityconfigurator.h"
 
 #include "../shared/mmrfiledata.h"
 //---------------------------------------------------------------------------
@@ -36,28 +33,7 @@ void MMRObject::setModalityInfo(QVariantMap info) {
 
     QString type = info.value("type").toString();
 
-#if defined(MMR_MODALITY_KINECT)
-    if (type == "kinect") {
-        modality = new ModalityKinect(this);
-    }
-#endif
-#if defined(MMR_MODALITY_QTSENSOR)
-    if (type == "qtsensor") {
-        modality = new ModalityQtSensor(this);
-    }
-#endif
-#if defined(MMR_MODALITY_BITALINO)
-    if (type == "bitalino") {
-        modality = new ModalityBITalino(this);
-    }
-#endif
-#if defined(MMR_MODALITY_FITBIT)
-    if (type == "fitbit") {
-        modality = new ModalityFitbit(this);
-    }
-#endif
-
-    modality->type = type;
+    modality = ModalityConfigurator::modalityForType(type, this);
     modality->identifier = identifier;
 }
 //---------------------------------------------------------------------------
