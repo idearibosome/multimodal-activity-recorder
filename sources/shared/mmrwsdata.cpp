@@ -13,7 +13,10 @@ void MMRWSData::loadFromByteArray(QByteArray byteArray) {
 
     inStream >> requestType;
     inStream >> dataType;
-    inStream >> data;
+
+    QVariant dataVariant;
+    inStream >> dataVariant;
+    data = dataVariant.toMap();
 }
 //---------------------------------------------------------------------------
 QByteArray MMRWSData::toByteArray() {
@@ -23,7 +26,7 @@ QByteArray MMRWSData::toByteArray() {
 
     outStream << requestType;
     outStream << dataType;
-    outStream << data;
+    outStream << QVariant(data);
 
     return byteArray;
 }
