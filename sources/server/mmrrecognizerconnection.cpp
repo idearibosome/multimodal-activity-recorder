@@ -110,7 +110,7 @@ void MMRRecognizerConnection::recognize() {
     QVariantMap recognitionData;
 
     foreach (QString modalityIdentifier, registeredModalityList) {
-        MMRModalityConnection *connection = server->modalityConnectionForIdentifier(identifier);
+        MMRModalityConnection *connection = server->modalityConnectionForIdentifier(modalityIdentifier);
         if (!connection) continue;
         if (connection->lastData.isEmpty()) continue;
 
