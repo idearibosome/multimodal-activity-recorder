@@ -97,6 +97,7 @@ bool KinectThread::startAcquisition() {
     QMutexLocker locker(&mutex);
 
     if (!isRunning()) {
+        abort = false;
         modality->startRecordingAcquisitionTimestamp();
         start();
     }
