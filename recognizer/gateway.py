@@ -58,12 +58,15 @@ model = model_module.create_model(config['model']['config'])
 # modalities
 modality_identifier_list = []
 modality_info_list = []
+modality_identifier_to_name_dict = {}
 for modality_info in config['modalities']:
   if (not 'identifier' in modality_info):
     modality_info['identifier'] = ''
   if (len(modality_info['identifier']) <= 0):
     identifier = input('- input identifier for %s: ' % (modality_info['name']))
     modality_info['identifier'] = identifier
+  
+  modality_identifier_to_name_dict[modality_info['identifier']] = modality_info['name']
   
   modality_identifier_list.append(modality_info['identifier'])
   modality_info_list.append(modality_info)
@@ -77,7 +80,16 @@ def wsStart():
   model.start()
 
 def wsRecognize(data):
-  return model.recognize(data)
+  new_data = {}
+  for (identifier, item) in data.items():
+    new_item = {}
+    for subitem in item:
+      if (subitem['type'] == 'value'):
+        new_item[subitem['name']] = subitem['value']
+      elif (subitem['type'] == 'image'):
+        new_item[subitem['name']] = subitem['image'].data()
+    new_data[modality_identifier_to_name_dict[identifier]] = new_item
+  return model.recognize(new_data)
 
 def wsStop():
   model.stop()
@@ -108,7 +120,7 @@ async def run():
       wsData.load_from_bytes(receivedData)
 
       print(wsData.requestType)
-      
+
       if (wsData.requestType == 'prepare'):
         wsPrepare()
       elif (wsData.requestType == 'start'):
