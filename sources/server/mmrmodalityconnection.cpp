@@ -65,6 +65,8 @@ void MMRModalityConnection::setWebSocket(QWebSocket *ws) {
 }
 //---------------------------------------------------------------------------
 void MMRModalityConnection::setFileMetadata(MMRFileMetadata *fileMetadata) {
+    if (!fileMetadata) return;
+
     this->fileMetadata = fileMetadata;
 
     fileMetadata->addModality(type, identifier, QVariantMap());

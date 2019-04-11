@@ -165,6 +165,7 @@ void MMRFileMetadata::createToFileDirPath(QString path, bool inMemoryMode) {
 }
 //---------------------------------------------------------------------------
 void MMRFileMetadata::addModality(QString type, QString identifier, QVariantMap configuration) {
+    if (!db) return;
 
     // configuration to blob
     QByteArray configurationByteArray;
@@ -193,6 +194,7 @@ void MMRFileMetadata::addModality(QString type, QString identifier, QVariantMap 
 }
 //---------------------------------------------------------------------------
 void MMRFileMetadata::addRecording(QString identifier, qint64 dataPos, qint64 timestamp) {
+    if (!db) return;
 
     // modalityIdx
     if (!modalityIdentifierToIdxMap.contains(identifier)) return;
