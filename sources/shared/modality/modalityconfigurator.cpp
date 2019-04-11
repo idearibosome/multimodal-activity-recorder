@@ -4,6 +4,7 @@
 #include "modalitykinect.h"
 #include "modalityqtsensor.h"
 #include "modalitybitalino.h"
+#include "modalityfitbit.h"
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 ModalityConfigurator::ModalityConfigurator(QObject *parent) : QObject(parent)
@@ -28,6 +29,10 @@ void ModalityConfigurator::registerModules(QQmlApplicationEngine *engine) {
 
 #if defined(MMR_MODALITY_BITALINO)
     qmlRegisterType<ModalityBITalino>();
+#endif
+
+#if defined(MMR_MODALITY_FITBIT)
+    qmlRegisterType<ModalityFitbit>();
 #endif
 }
 //------------------------------------------------------------------------------
