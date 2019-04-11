@@ -210,6 +210,14 @@ void MMRServer::sendModalityRequest(MMRWSData *data) {
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
+MMRModalityConnection *MMRServer::modalityConnectionForIdentifier(QString identifier) {
+    for (auto connection=modalityConnections.begin(); connection!=modalityConnections.end(); ++connection) {
+        if ((*connection)->identifier == identifier) return (*connection);
+    }
+    return nullptr;
+}
+//---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
 void MMRServer::prepareFileMetadata() {
     if (fileMetadata) return;
     if (storageBasePath.isEmpty()) return;

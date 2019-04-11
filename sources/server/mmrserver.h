@@ -33,6 +33,8 @@ public:
 
     void sendModalityRequest(MMRWSData *wsData);
 
+    MMRModalityConnection *modalityConnectionForIdentifier(QString identifier);
+
 private:
     QWebSocketServer *wsModalityServer = nullptr;
     QWebSocketServer *wsRecognizerServer = nullptr;
