@@ -163,6 +163,9 @@ void MMRModalityConnection::handleRequestData(QString type, QVariantMap data) {
         fileMetadata->addRecording(identifier, filePos, timestamp);
     }
 
+    lastDataTimestamp = timestamp;
+    lastData = dataByteArray;
+
     IRQMSignalHandler::sendSignal("mmrconnection", "receivedData", identifier);
 
     MMRWSData wsData;

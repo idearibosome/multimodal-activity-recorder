@@ -22,6 +22,9 @@ public:
     MMRFileMetadata *fileMetadata = NULL;
     MMRFileData *fileData = NULL;
 
+    qint64 lastDataTimestamp = 0;
+    QByteArray lastData;
+
     QString storageBasePath;
 
     QString type;
