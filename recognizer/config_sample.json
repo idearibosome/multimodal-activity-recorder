@@ -1,0 +1,21 @@
+{
+  "model": {
+    "name": "model_sample",
+    "identifier": "recognizer_sample",
+    "fps": 1,
+    "config": {
+    }
+  },
+  "modalities": [
+    {
+      "name": "kinect", "type": "kinect", "identifier": ""
+    }, {
+      "name": "qtsensor", "type": "qtsensor", "identifier": ""
+    }, {
+      "name": "fitbit", "type": "fitbit", "identifier": ""
+    }
+  ],
+  "server": {
+    "url": "ws://127.0.0.1:8881"
+  }
+}

@@ -1,5 +1,0 @@
-<RCC>
-    <qresource prefix="/qml">
-        <file>recognizer/main.qml</file>
-    </qresource>
-</RCC>
