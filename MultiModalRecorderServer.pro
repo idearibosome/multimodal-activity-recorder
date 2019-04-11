@@ -74,6 +74,14 @@ win32 {
 }
 
 
+# modalities
+MMRModalities += kinect
+MMRModalities += qtsensor
+MMRModalities += bitalino
+MMRModalities += fitbit
+include(modalities.pri)
+
+
 # default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
