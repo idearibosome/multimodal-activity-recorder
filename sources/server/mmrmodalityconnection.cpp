@@ -181,22 +181,31 @@ void MMRModalityConnection::handleRequestData(QString type, QVariantMap data) {
 void MMRModalityConnection::handleRequestDataList(QString type, QVariantMap data) {
     if (fileData && fileMetadata) {
         fileMetadata->beginTransaction();
+    }
 
-        QVariantList dataList = data.value("list").toList();
-        qint64 totalDataSize = 0;
-        for (int i=0; i<dataList.count(); i++) {
-            QVariantMap eachData = dataList[i].toMap();
+    QVariantList dataList = data.value("list").toList();
+    qint64 totalDataSize = 0;
+    for (int i=0; i<dataList.count(); i++) {
+        QVariantMap eachData = dataList[i].toMap();
 
-            qint64 timestamp = eachData.value("timestamp").toULongLong();
-            QByteArray dataByteArray = eachData.value("data").toByteArray();
+        qint64 timestamp = eachData.value("timestamp").toULongLong();
+        QByteArray dataByteArray = eachData.value("data").toByteArray();
 
+        if (fileData && fileMetadata) {
             qint64 filePos = fileData->getCurrentFilePos();
             fileData->writeData(timestamp, dataByteArray);
             fileMetadata->addRecording(identifier, filePos, timestamp);
-
-            totalDataSize += dataByteArray.size();
         }
 
+        totalDataSize += dataByteArray.size();
+
+        if (i+1 == dataList.count()) {
+            lastDataTimestamp = timestamp;
+            lastData = dataByteArray;
+        }
+    }
+
+    if (fileData && fileMetadata) {
         fileMetadata->commitTransaction();
     }
 
