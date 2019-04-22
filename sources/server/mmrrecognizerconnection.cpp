@@ -112,12 +112,15 @@ void MMRRecognizerConnection::recognize() {
     foreach (QString modalityIdentifier, registeredModalityList) {
         MMRModalityConnection *connection = server->modalityConnectionForIdentifier(modalityIdentifier);
         if (!connection) continue;
-        if (connection->lastData.isEmpty()) continue;
+        {
+            QMutexLocker lastDataLocker(&(connection->lastDataMutex));
+            if (connection->lastData.isEmpty()) continue;
 
-        Modality *modality = ModalityConfigurator::modalityForType(connection->type);
-        if (!modality) continue;
+            Modality *modality = ModalityConfigurator::modalityForType(connection->type);
+            if (!modality) continue;
 
-        recognitionData.insert(modalityIdentifier, modality->parseData(connection->lastData, Modality::ParseType_Recognizer));
+            recognitionData.insert(modalityIdentifier, modality->parseData(connection->lastData, Modality::ParseType_Recognizer));
+        }
     }
 
     MMRWSData *data = new MMRWSData();

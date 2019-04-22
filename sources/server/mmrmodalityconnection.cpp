@@ -165,8 +165,10 @@ void MMRModalityConnection::handleRequestData(QString type, QVariantMap data) {
         fileMetadata->addRecording(identifier, filePos, timestamp);
     }
 
+    lastDataMutex.lock();
     lastDataTimestamp = timestamp;
     lastData = dataByteArray;
+    lastDataMutex.unlock();
 
     IRQMSignalHandler::sendSignal("mmrconnection", "receivedData", identifier);
 

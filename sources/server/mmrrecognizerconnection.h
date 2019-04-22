@@ -1,6 +1,8 @@
 #ifndef MMRRECOGNIZERCONNECTION_H
 #define MMRRECOGNIZERCONNECTION_H
 
+#include <QMutex>
+#include <QMutexLocker>
 #include <QObject>
 #include <QTimer>
 #include <QWebSocket>

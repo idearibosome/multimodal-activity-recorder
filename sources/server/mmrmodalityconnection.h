@@ -4,6 +4,7 @@
 #include <QDataStream>
 #include <QDir>
 #include <QFile>
+#include <QMutex>
 #include <QObject>
 #include <QWebSocket>
 
@@ -22,6 +23,7 @@ public:
     MMRFileMetadata *fileMetadata = NULL;
     MMRFileData *fileData = NULL;
 
+    QMutex lastDataMutex;
     qint64 lastDataTimestamp = 0;
     QByteArray lastData;
 
