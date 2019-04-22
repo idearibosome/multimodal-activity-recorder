@@ -101,7 +101,7 @@ def wsFinalize():
 # run websocket
 async def run():
   print('- connecting...')
-  async with websockets.connect(config['server']['url'], max_size=(2**32)) as websocket:
+  async with websockets.connect(config['server']['url'], max_size=(2**32), read_limit=(2**32), write_limit=(2**32), max_queue=(2**8)) as websocket:
     wsData = MMRWSData()
     wsData.requestType = 'register'
     wsData.dataType = 'request'
@@ -115,29 +115,33 @@ async def run():
     print('- connected')
 
     while True:
-      receivedData = await websocket.recv()
-      wsData = MMRWSData()
-      wsData.load_from_bytes(receivedData)
+      try:
+        receivedData = await websocket.recv()
+        wsData = MMRWSData()
+        wsData.load_from_bytes(receivedData)
 
-      print(wsData.requestType)
+        print(wsData.requestType)
 
-      if (wsData.requestType == 'prepare'):
-        wsPrepare()
-      elif (wsData.requestType == 'start'):
-        wsStart()
-      elif (wsData.requestType == 'recognize'):
-        res = wsRecognize(wsData.data)
+        if (wsData.requestType == 'prepare'):
+          wsPrepare()
+        elif (wsData.requestType == 'start'):
+          wsStart()
+        elif (wsData.requestType == 'recognize'):
+          res = wsRecognize(wsData.data)
 
-        resWsData = MMRWSData()
-        resWsData.requestType = 'recognize'
-        resWsData.dataType = 'response'
-        resWsData.data = res
-        await websocket.send(resWsData.to_bytes())
+          resWsData = MMRWSData()
+          resWsData.requestType = 'recognize'
+          resWsData.dataType = 'response'
+          resWsData.data = res
+          await websocket.send(resWsData.to_bytes())
 
-      elif (wsData.requestType == 'stop'):
-        wsStop()
-      elif (wsData.requestType == 'finalize'):
-        wsFinalize()
+        elif (wsData.requestType == 'stop'):
+          wsStop()
+        elif (wsData.requestType == 'finalize'):
+          wsFinalize()
+          break
+      except Exception as e:
+        print(e)
         break
 
 
