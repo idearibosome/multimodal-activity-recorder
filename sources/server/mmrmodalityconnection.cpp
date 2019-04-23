@@ -202,8 +202,10 @@ void MMRModalityConnection::handleRequestDataList(QString type, QVariantMap data
         totalDataSize += dataByteArray.size();
 
         if (i+1 == dataList.count()) {
+            lastDataMutex.lock();
             lastDataTimestamp = timestamp;
             lastData = dataByteArray;
+            lastDataMutex.unlock();
         }
     }
 
