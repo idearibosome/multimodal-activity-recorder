@@ -32,6 +32,7 @@ This repository contains codes that enable retrieving human activity recognition
 
 - Qt 5.9+
 - (Kinect) Kinect SDK v2.0
+- (Recognizer) PySide2
 
 
 ## License
