@@ -8,7 +8,7 @@
 #include <QMutexLocker>
 #include <QObject>
 
-#include "sqlite3.h"
+#include "sqlite/sqlite3.h"
 
 #define MMR_FILE_METADATA_FILENAME "mmr.sqlite"
 

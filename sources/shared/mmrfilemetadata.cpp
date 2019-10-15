@@ -3,7 +3,7 @@
 #include "irqm/irqmpathhelper.h"
 #include "irqm/irqmsqlitehelper.h"
 
-#include "sqlite3.h"
+#include "sqlite/sqlite3.h"
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
 MMRFileMetadata::MMRFileMetadata(QObject *parent) : QObject(parent) {
