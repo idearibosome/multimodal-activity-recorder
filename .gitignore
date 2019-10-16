@@ -3,7 +3,7 @@
 
 *~
 *.autosave
-*.a
+#*.a
 *.core
 *.moc
 *.o
