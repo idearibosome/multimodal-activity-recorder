@@ -6,10 +6,8 @@ This repository contains codes that enable retrieving human activity recognition
 ## Supported platforms
 
 - Windows 7+ (x86/x64)
-- ~~macOS 10.10+~~
-  - Currently, the SQLite and QHttp libraries are missing.
-- ~~iOS 10.0+~~
-  - Currently, the SQLite and QHttp libraries are missing.
+- macOS 10.10+
+- iOS 10.0+
 - Android 5.0+ (API Level 21+)
 
 
