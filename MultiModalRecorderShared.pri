@@ -38,6 +38,8 @@ win32:contains(QMAKE_HOST.arch, x86_64) {
 } else:win32 {
   LIBS += -L$$PWD/lib/win/x86
 } else:macx {
+  LIBS += -L$$PWD/lib/macos
+  LIBS += -framework CoreFoundation -framework Foundation -framework AppKit
 } else:android {
   equals(ANDROID_TARGET_ARCH, armeabi-v7a) {
     LIBS += -L$$PWD/lib/android/armeabi-v7a
@@ -50,6 +52,7 @@ win32:contains(QMAKE_HOST.arch, x86_64) {
       $$PWD/lib/android/x86/libqhttp.so
   }
 } else:ios {
+  LIBS += -L$$PWD/lib/ios
 }
 
 # common libraries
