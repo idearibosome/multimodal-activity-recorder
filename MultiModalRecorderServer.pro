@@ -25,7 +25,7 @@ win32 {
 } else:macx {
   VERSION = 0.5.0
 
-  QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.8
+  QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.10
   QMAKE_LFLAGS += -ObjC
 } else:android {
   VERSION = 0.5.0
@@ -34,7 +34,7 @@ win32 {
 
   CONFIG -= bitcode
 
-  QMAKE_IOS_DEPLOYMENT_TARGET = 8.0
+  QMAKE_IOS_DEPLOYMENT_TARGET = 10.0
 }
 
 
