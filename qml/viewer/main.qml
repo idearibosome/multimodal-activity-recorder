@@ -225,6 +225,9 @@ Window {
                 text: "Play"
                 visible: !(container.isPlaying)
                 onClicked: {
+                    if (timestampSlider.value >= timestampSlider.maximumValue) {
+                        timestampSlider.value = 0;
+                    }
                     container.playbackLastFetchedTimestamp = -1;
                     container.isPlaying = true;
                 }
