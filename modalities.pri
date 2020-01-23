@@ -31,8 +31,10 @@ contains(MMRModalities, "kinect") {
 contains(MMRModalities, "qtsensor") {
     QT += sensors
 
-    HEADERS += $$PWD/sources/shared/modality/modalityqtsensor.h
-    SOURCES += $$PWD/sources/shared/modality/modalityqtsensor.cpp
+    HEADERS += $$PWD/sources/shared/modality/modalityqtsensor.h \
+        $$PWD/sources/shared/modality/parser/modalityqtsensorparser.h
+    SOURCES += $$PWD/sources/shared/modality/modalityqtsensor.cpp \
+        $$PWD/sources/shared/modality/parser/modalityqtsensorparser.cpp
 
     DEFINES += MMR_MODALITY_QTSENSOR
 }
