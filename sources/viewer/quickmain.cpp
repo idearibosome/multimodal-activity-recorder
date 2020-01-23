@@ -7,10 +7,7 @@
 
 #include "../shared/mmrfilemetadata.h"
 
-#include "../shared/modality/modality.h"
-#include "../shared/modality/modalitykinect.h"
-#include "../shared/modality/modalityqtsensor.h"
-#include "../shared/modality/modalitybitalino.h"
+#include "../shared/modality/parser/modalityparser.h"
 
 QuickMain *qMain;
 //---------------------------------------------------------------------------
@@ -129,7 +126,7 @@ void QuickMain::exportMMRData(QString exportPath) {
 
     for (auto object=objectList.begin(); object!=objectList.end(); ++object) {
         QString identifier = (*object)->identifier;
-        QString modalityType = (*object)->modality->type;
+        QString modalityType = (*object)->modalityParser->type;
 
         QVariantList recordings = fileMetadata->getModalityRecordings(identifier);
 

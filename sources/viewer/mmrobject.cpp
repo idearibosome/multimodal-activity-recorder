@@ -1,7 +1,7 @@
 #include "mmrobject.h"
 
-#include "../shared/modality/modality.h"
 #include "../shared/modality/modalityconfigurator.h"
+#include "../shared/modality/parser/modalityparser.h"
 
 #include "../shared/mmrfiledata.h"
 //---------------------------------------------------------------------------
@@ -17,9 +17,9 @@ void MMRObject::clear() {
         fileData->deleteLater();
         fileData = NULL;
     }
-    if (modality) {
-        modality->deleteLater();
-        modality = NULL;
+    if (modalityParser) {
+        modalityParser->deleteLater();
+        modalityParser = NULL;
     }
 
     loadedData.clear();
@@ -33,14 +33,13 @@ void MMRObject::setModalityInfo(QVariantMap info) {
 
     QString type = info.value("type").toString();
 
-    modality = ModalityConfigurator::modalityForType(type, this);
-    modality->identifier = identifier;
+    modalityParser = ModalityConfigurator::modalityParserForType(type, this);
 }
 //---------------------------------------------------------------------------
 void MMRObject::loadFileData(QString basePath) {
-    if (!modality) return;
+    if (!modalityParser) return;
 
-    QString filePath = basePath + QDir::separator() + modality->type + "_" + modality->identifier + ".mmr";
+    QString filePath = basePath + QDir::separator() + modalityParser->type + "_" + identifier + ".mmr";
     filePath = QDir::cleanPath(filePath);
 
     fileData = new MMRFileData(this);
@@ -49,12 +48,12 @@ void MMRObject::loadFileData(QString basePath) {
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
 QString MMRObject::getObjectName() {
-    return modality->type + " (" + identifier + ")";
+    return modalityParser->type + " (" + identifier + ")";
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
 void MMRObject::loadModalityData(qint64 dataPos) {
-    if (!modality || !fileData) return;
+    if (!modalityParser || !fileData) return;
 
     if (loadedDataPos == dataPos) return; // already loaded
 
@@ -62,7 +61,7 @@ void MMRObject::loadModalityData(qint64 dataPos) {
 
     QByteArray dataInFile = timestampAndData.value("data").toByteArray();
 
-    QVariantList parsedData = modality->parseData(dataInFile);
+    QVariantList parsedData = modalityParser->parseData(dataInFile);
     QMap<QString, QImage> parsedImageData;
 
     for (int i=0; i<parsedData.count(); i++) {

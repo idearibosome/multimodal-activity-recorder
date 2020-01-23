@@ -2,11 +2,12 @@
 #define MMROBJECT_H
 
 #include <QDir>
+#include <QImage>
 #include <QMap>
 #include <QObject>
 #include <QVariant>
 
-class Modality;
+class ModalityParser;
 class MMRFileData;
 
 class MMRObject : public QObject
@@ -16,7 +17,7 @@ public:
     explicit MMRObject(QObject *parent = nullptr);
 
     QString identifier;
-    Modality *modality = NULL;
+    ModalityParser *modalityParser = NULL;
     MMRFileData *fileData = NULL;
 
     qint64 loadedDataPos = -1;
