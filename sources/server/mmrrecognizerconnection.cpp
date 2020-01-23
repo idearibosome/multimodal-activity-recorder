@@ -5,6 +5,7 @@
 
 #include "../shared/modality/modality.h"
 #include "../shared/modality/modalityconfigurator.h"
+#include "../shared/modality/parser/modalityparser.h"
 
 #include "../shared/mmrwsdata.h"
 
@@ -116,10 +117,10 @@ void MMRRecognizerConnection::recognize() {
             QMutexLocker lastDataLocker(&(connection->lastDataMutex));
             if (connection->lastData.isEmpty()) continue;
 
-            Modality *modality = ModalityConfigurator::modalityForType(connection->type);
-            if (!modality) continue;
+            ModalityParser *parser = ModalityConfigurator::modalityParserForType(connection->type);
+            if (!parser) continue;
 
-            recognitionData.insert(modalityIdentifier, modality->parseData(connection->lastData, Modality::ParseType_Recognizer));
+            recognitionData.insert(modalityIdentifier, parser->parseData(connection->lastData, ModalityParser::ParseType_Recognizer));
         }
     }
 
