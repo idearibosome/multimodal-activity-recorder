@@ -9,8 +9,10 @@ SOURCES += $$PWD/sources/shared/modality/modality.cpp \
 
 # kinect
 contains(MMRModalities, "kinect") {
-    HEADERS += $$PWD/sources/shared/modality/modalitykinect.h
-    SOURCES += $$PWD/sources/shared/modality/modalitykinect.cpp
+    HEADERS += $$PWD/sources/shared/modality/modalitykinect.h \
+        $$PWD/sources/shared/modality/parser/modalitykinectparser.h
+    SOURCES += $$PWD/sources/shared/modality/modalitykinect.cpp \
+        $$PWD/sources/shared/modality/parser/modalitykinectparser.cpp
 
     win32 {
         DEFINES += MMR_MODALITY_KINECT
