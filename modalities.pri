@@ -1,8 +1,10 @@
 # general
 HEADERS += $$PWD/sources/shared/modality/modality.h \
-    $$PWD/sources/shared/modality/modalityconfigurator.h
+    $$PWD/sources/shared/modality/modalityconfigurator.h \
+    $$PWD/sources/shared/modality/parser/modalityparser.h
 SOURCES += $$PWD/sources/shared/modality/modality.cpp \
-    $$PWD/sources/shared/modality/modalityconfigurator.cpp
+    $$PWD/sources/shared/modality/modalityconfigurator.cpp \
+    $$PWD/sources/shared/modality/parser/modalityparser.cpp
 
 
 # kinect
