@@ -42,8 +42,10 @@ contains(MMRModalities, "qtsensor") {
 
 # BITalino
 contains(MMRModalities, "bitalino") {
-    HEADERS += $$PWD/sources/shared/modality/modalitybitalino.h
-    SOURCES += $$PWD/sources/shared/modality/modalitybitalino.cpp
+    HEADERS += $$PWD/sources/shared/modality/modalitybitalino.h \
+        $$PWD/sources/shared/modality/parser/modalitybitalinoparser.h
+    SOURCES += $$PWD/sources/shared/modality/modalitybitalino.cpp \
+        $$PWD/sources/shared/modality/parser/modalitybitalinoparser.cpp
 
     ios|android|unix|macx {
         QT += bluetooth
