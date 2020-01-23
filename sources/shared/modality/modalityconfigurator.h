@@ -5,6 +5,7 @@
 #include <QQmlApplicationEngine>
 
 class Modality;
+class ModalityParser;
 
 class ModalityConfigurator : public QObject
 {
@@ -14,6 +15,7 @@ public:
 
     static void registerModules(QQmlApplicationEngine *engine);
     static Modality *modalityForType(QString type, QObject *parent = nullptr);
+    static ModalityParser *modalityParserForType(QString type, QObject *parent = nullptr);
 
 signals:
 

@@ -5,6 +5,12 @@
 #include "modalityqtsensor.h"
 #include "modalitybitalino.h"
 #include "modalityfitbit.h"
+
+#include "parser/modalityparser.h"
+#include "parser/modalitykinectparser.h"
+#include "parser/modalityqtsensorparser.h"
+#include "parser/modalitybitalinoparser.h"
+#include "parser/modalityfitbitparser.h"
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 ModalityConfigurator::ModalityConfigurator(QObject *parent) : QObject(parent)
@@ -65,6 +71,20 @@ Modality *ModalityConfigurator::modalityForType(QString type, QObject *parent) {
     modality->type = type;
 
     return modality;
+}
+//------------------------------------------------------------------------------
+ModalityParser *ModalityConfigurator::modalityParserForType(QString type, QObject *parent) {
+    ModalityParser *parser = nullptr;
+
+    if (type == "kinect") parser = new ModalityKinectParser(parent);
+    else if (type == "qtsensor") parser = new ModalityQtSensorParser(parent);
+    else if (type == "bitalino") parser = new ModalityBITalinoParser(parent);
+    else if (type == "fitbit") parser = new ModalityFitbitParser(parent);
+
+    if (!parser) return parser;
+    parser->type = type;
+
+    return parser;
 }
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
