@@ -243,51 +243,5 @@ void ModalityKinect::stopAcquisition() {
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
-QVariantList ModalityKinect::parseData(QByteArray data, EModalityParseType parseType) {
-    QVariantList parsedDataList;
-
-    QDataStream inStream(&data, QIODevice::ReadOnly);
-    inStream.setVersion(QDataStream::Qt_5_9);
-
-    int colorFrameWidth, colorFrameHeight;
-    QByteArray colorData;
-
-    inStream >> colorFrameWidth >> colorFrameHeight >> colorData;
-
-    if (parseType == ParseType_Recognizer) {
-        parsedDataList.append(Modality::parsedDataItemWithValue("color_width", colorFrameWidth));
-        parsedDataList.append(Modality::parsedDataItemWithValue("color_height", colorFrameHeight));
-    }
-
-    if (parseType == ParseType_Viewer) {
-        QImage colorImage = QImage((const uchar *)colorData.constData(), colorFrameWidth, colorFrameHeight, QImage::Format_RGB888).copy();
-        parsedDataList.append(Modality::parsedDataItemWithImage("color", colorImage));
-    }
-    else {
-        parsedDataList.append(Modality::parsedDataItemWithByteArray("color", colorData));
-    }
-
-    int depthFrameWidth, depthFrameHeight;
-    QByteArray depthData;
-
-    inStream >> depthFrameWidth >> depthFrameHeight >> depthData;
-
-    if (parseType == ParseType_Recognizer) {
-        parsedDataList.append(Modality::parsedDataItemWithValue("depth_width", depthFrameWidth));
-        parsedDataList.append(Modality::parsedDataItemWithValue("depth_height", depthFrameHeight));
-    }
-
-    if (parseType == ParseType_Viewer) {
-        QImage depthImage = QImage((const uchar *)depthData.constData(), depthFrameWidth, depthFrameHeight, QImage::Format_RGB16).copy();
-        parsedDataList.append(Modality::parsedDataItemWithImage("depth", depthImage));
-    }
-    else {
-        parsedDataList.append(Modality::parsedDataItemWithByteArray("depth", depthData));
-    }
-
-    return parsedDataList;
-}
-//---------------------------------------------------------------------------
-//---------------------------------------------------------------------------
 
 #endif // MMR_MODALITY_KINECT

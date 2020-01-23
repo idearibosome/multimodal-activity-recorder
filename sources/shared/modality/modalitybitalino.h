@@ -58,8 +58,6 @@ public:
     bool startAcquisition() override;
     void stopAcquisition() override;
 
-    QVariantList parseData(QByteArray data, EModalityParseType parseType) override;
-
     Q_INVOKABLE void startDiscovery();
     Q_INVOKABLE void stopDiscovery();
 

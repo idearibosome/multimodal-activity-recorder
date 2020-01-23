@@ -298,26 +298,6 @@ void ModalityBITalino::stopAcquisition() {
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
-QVariantList ModalityBITalino::parseData(QByteArray data, EModalityParseType parseType) {
-    QVariantList parsedDataList;
-
-    QDataStream inStream(&data, QIODevice::ReadOnly);
-    inStream.setVersion(QDataStream::Qt_5_9);
-
-    int numChannels;
-    inStream >> numChannels;
-    parsedDataList.append(Modality::parsedDataItemWithValue("num_channels", numChannels));
-
-    for (int i=0; i<numChannels; i++) {
-        qint16 analogData;
-        inStream >> analogData;
-        parsedDataList.append(Modality::parsedDataItemWithValue(QString("c%1").arg(i), analogData));
-    }
-
-    return parsedDataList;
-}
-//---------------------------------------------------------------------------
-//---------------------------------------------------------------------------
 void ModalityBITalino::startDiscovery() {
     btDiscoveredDeviceList.clear();
     btDiscoveredDeviceInfoList.clear();

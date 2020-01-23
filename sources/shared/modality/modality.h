@@ -15,11 +15,6 @@ class Modality : public QObject
 public:
     explicit Modality(QObject *parent = nullptr);
 
-    enum EModalityParseType {
-        ParseType_Viewer = 0,
-        ParseType_Recognizer = 1
-    };
-
     QString type;
     QString identifier;
     QVariantMap configuration;
@@ -31,11 +26,6 @@ public:
 
     virtual bool startAcquisition() = 0;
     virtual void stopAcquisition() = 0;
-
-    virtual QVariantList parseData(QByteArray data, EModalityParseType parseType = ParseType_Viewer) = 0;
-    static QVariant parsedDataItemWithValue(QString name, QVariant value);
-    static QVariant parsedDataItemWithByteArray(QString name, QByteArray byteArray);
-    static QVariant parsedDataItemWithImage(QString name, QImage image);
 
     qint64 getTimestamp();
     void startRecordingAcquisitionTimestamp();
