@@ -285,6 +285,7 @@ Window {
 
                                 Button {
                                     text: "Set"
+                                    enabled: storagePathTextField.text.length > 0
                                     onClicked: {
                                         mServer.setStorageBasePath(storagePathTextField.text);
                                     }
