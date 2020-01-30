@@ -206,6 +206,10 @@ Window {
             Layout.fillWidth: true
             spacing: 8
 
+            Text {
+                font.bold: true
+                text: "v" + qMain.getAppVersionString()
+            }
             TextField {
                 id: timestampTextField
                 Layout.preferredWidth: 80

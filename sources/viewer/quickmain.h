@@ -36,6 +36,8 @@ public:
 
     QMutex loadObjectDataMutex;
 
+    Q_INVOKABLE QString getAppVersionString() { return APP_VERSION_STRING; }
+
     Q_INVOKABLE void loadMMRData(QString basePath);
     Q_INVOKABLE void unloadMMRData();
 
