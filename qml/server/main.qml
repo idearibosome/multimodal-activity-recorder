@@ -154,7 +154,7 @@ Window {
 
                         Text {
                             font.bold: true
-                            text: "MMRServer"
+                            text: "MMRServer (v" + mServer.getAppVersionString() + ")"
                         }
                         Item {
                             Layout.fillWidth: true

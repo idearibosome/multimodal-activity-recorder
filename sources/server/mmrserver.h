@@ -19,6 +19,8 @@ class MMRServer : public QObject
 public:
     explicit MMRServer(QObject *parent = nullptr);
 
+    Q_INVOKABLE QString getAppVersionString() { return APP_VERSION_STRING; }
+
     void log(QString text);
 
     Q_INVOKABLE void startServer(int modalityPort, int recognizerPort);
