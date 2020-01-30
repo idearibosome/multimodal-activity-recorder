@@ -20,6 +20,8 @@ public:
 
     QString lastConnectedServerUrl;
 
+    Q_INVOKABLE QString getAppVersionString() { return APP_VERSION_STRING; }
+
     Q_INVOKABLE QVariantList getAvailableModalities();
 
     Q_INVOKABLE void loadMMRData(QString basePath);

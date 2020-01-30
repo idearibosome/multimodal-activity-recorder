@@ -294,7 +294,7 @@ Window {
             Layout.margins: 8
             wrapMode: TextEdit.Wrap
             readOnly: true
-            text: "MultiModalRecorderClient"
+            text: "MultiModalRecorderClient (v" + qMain.getAppVersionString() + ")"
 
             Component.onCompleted: {
                 container.logTextArea = logTextArea
