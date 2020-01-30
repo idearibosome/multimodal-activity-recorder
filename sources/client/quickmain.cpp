@@ -79,6 +79,13 @@ void QuickMain::unloadMMRData() {
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
+QVariantList QuickMain::getMMRModalities() {
+    if (!fileMetadata) return QVariantList();
+
+    return fileMetadata->getModalities();
+}
+//---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
 QString QuickMain::createClient(QVariantMap modality) {
     QString type = modality.value("type").toString();
 

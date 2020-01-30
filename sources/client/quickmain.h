@@ -24,6 +24,8 @@ public:
 
     Q_INVOKABLE void loadMMRData(QString basePath);
     Q_INVOKABLE void unloadMMRData();
+    Q_INVOKABLE QVariantList getMMRModalities();
+
     Q_INVOKABLE QString createClient(QVariantMap modality);
     Q_INVOKABLE void destroyClient(QString identifier);
     MMRClient *getClient(QString identifier);

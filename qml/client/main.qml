@@ -88,6 +88,8 @@ Window {
     //---------------------------------------------------------------------------
     function slotMMRDataLoaded() {
         isMMRDataLoaded = true;
+
+        fileModalityListComboBox.updateList();
     }
     //---------------------------------------------------------------------------
     function slotMMRDataUnloaded() {
@@ -223,10 +225,23 @@ Window {
                                     Layout.fillWidth: true
                                     model: []
 
+                                    property var modalities: []
+
                                     Component.onCompleted: {
                                         container.fileModalityListComboBox = this;
                                     }
 
+                                    function updateList() {
+                                        modalities = qMain.getMMRModalities();
+
+                                        var modelTextList = [];
+                                        for (var i in modalities) {
+                                            var modality = modalities[i];
+                                            modelTextList.push(modality["type"] + " (" + modality["identifier"] + ")");
+                                        }
+
+                                        model = modelTextList;
+                                    }
                                 }
                                 }
                             }
