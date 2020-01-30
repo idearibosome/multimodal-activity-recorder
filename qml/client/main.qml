@@ -1,5 +1,6 @@
 import QtQuick 2.9
 import QtQuick.Controls 1.4
+import QtQuick.Dialogs 1.2
 import QtQuick.Layouts 1.3
 import QtQuick.Window 2.3
 
@@ -23,12 +24,18 @@ Window {
         "fitbit": componentModalityFitbit
     })
 
+    property bool isMMRDataLoaded: false
+    property ComboBox fileModalityListComboBox
+
     property TextArea logTextArea
 
     Component.onCompleted: {
         IRQM.SignalHandler.bindSignal("main", "log", this, "log");
 
         IRQM.SignalHandler.bindSignal("main", "destroyClient", this, "destroyClient");
+
+        IRQM.SignalHandler.bindSignal("main", "mmrDataLoaded", this, "slotMMRDataLoaded");
+        IRQM.SignalHandler.bindSignal("main", "mmrDataUnloaded", this, "slotMMRDataUnloaded");
     }
 
     Component.onDestruction: {
@@ -76,6 +83,15 @@ Window {
         tabView.removeTab(tabIndex);
 
         clientIdentifiers.splice(tabIndex, 1);
+    }
+    //---------------------------------------------------------------------------
+    //---------------------------------------------------------------------------
+    function slotMMRDataLoaded() {
+        isMMRDataLoaded = true;
+    }
+    //---------------------------------------------------------------------------
+    function slotMMRDataUnloaded() {
+        isMMRDataLoaded = false;
     }
     //---------------------------------------------------------------------------
     //---------------------------------------------------------------------------
@@ -161,6 +177,57 @@ Window {
                                         var modality = newModalityComboBox.modalities[newModalityComboBox.currentIndex];
                                         container.createClient(modality);
                                     }
+                                }
+                            }
+
+                            RowLayout {
+                                Layout.fillWidth: true
+                                spacing: 8
+
+                                Text {
+                                    text: "Load from file: "
+                                }
+                                Button {
+                                    id: mmrPathBrowseButton
+                                    text: "Browse"
+                                    enabled: !container.isMMRDataLoaded
+
+                                    Component.onCompleted: {
+                                    }
+                                    onClicked: {
+                                        openDialog.open();
+                                    }
+
+                                    FileDialog {
+                                        id: openDialog
+                                        nameFilters: ["mmr.sqlite"]
+
+                                        onAccepted: {
+                                            var path = fileUrl.toString();
+                                            if (path.startsWith("file:///")) {
+                                                path = path.replace(/^(file:\/{3})/, "");
+                                            }
+                                            else if (path.startsWith("file:")) {
+                                                path = path.replace(/^(file:)/, "");
+                                            }
+                                            path = path.replace(/mmr\.sqlite$/, "");
+                                            path = decodeURIComponent(path);
+
+                                            qMain.loadMMRData(path);
+                                            log("Load MMR file: " + path);
+                                        }
+                                    }
+                                }
+                                ComboBox {
+                                    id: fileModalityListComboBox
+                                    Layout.fillWidth: true
+                                    model: []
+
+                                    Component.onCompleted: {
+                                        container.fileModalityListComboBox = this;
+                                    }
+
+                                }
                                 }
                             }
                         }

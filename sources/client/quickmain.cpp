@@ -2,6 +2,10 @@
 
 #include "mmrclient.h"
 
+#include "../shared/mmrfilemetadata.h"
+
+#include "../shared/irqm/irqmsignalhandler.h"
+
 #include "../shared/modality/modality.h"
 #include "../shared/modality/modalitykinect.h"
 #include "../shared/modality/modalityqtsensor.h"
@@ -53,6 +57,25 @@ QVariantList QuickMain::getAvailableModalities() {
 #endif
 
     return modalities;
+}
+//---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+void QuickMain::loadMMRData(QString basePath) {
+    unloadMMRData();
+
+    fileMetadata = new MMRFileMetadata(this);
+    fileMetadata->loadFromFileDirPath(basePath);
+
+    IRQMSignalHandler::sendSignal("main", "mmrDataLoaded");
+}
+//---------------------------------------------------------------------------
+void QuickMain::unloadMMRData() {
+    if (fileMetadata) {
+        fileMetadata->deleteLater();
+        fileMetadata = NULL;
+    }
+
+    IRQMSignalHandler::sendSignal("main", "mmrDataUnloaded");
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------

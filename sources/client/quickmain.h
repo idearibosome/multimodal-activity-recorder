@@ -5,6 +5,7 @@
 #include <QVariant>
 
 class MMRClient;
+class MMRFileMetadata;
 class Modality;
 
 class QuickMain : public QObject
@@ -15,10 +16,14 @@ public:
 
     QMap<QString, MMRClient *> clientList;
 
+    MMRFileMetadata *fileMetadata = NULL;
+
     QString lastConnectedServerUrl;
 
     Q_INVOKABLE QVariantList getAvailableModalities();
 
+    Q_INVOKABLE void loadMMRData(QString basePath);
+    Q_INVOKABLE void unloadMMRData();
     Q_INVOKABLE QString createClient(QVariantMap modality);
     Q_INVOKABLE void destroyClient(QString identifier);
     MMRClient *getClient(QString identifier);
