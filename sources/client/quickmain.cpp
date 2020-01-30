@@ -7,6 +7,7 @@
 #include "../shared/irqm/irqmsignalhandler.h"
 
 #include "../shared/modality/modality.h"
+#include "../shared/modality/modalitymmrfile.h"
 #include "../shared/modality/modalitykinect.h"
 #include "../shared/modality/modalityqtsensor.h"
 #include "../shared/modality/modalitybitalino.h"
@@ -111,6 +112,32 @@ QString QuickMain::createClient(QVariantMap modality) {
         client->registerModality(new ModalityFitbit());
     }
 #endif
+
+    clientList.insert(client->identifier, client);
+
+    return client->identifier;
+}
+//---------------------------------------------------------------------------
+QString QuickMain::createMMRDataClient(QVariantMap modalityInfo) {
+    if (!fileMetadata) return QString();
+
+    MMRClient *client = new MMRClient(this);
+    client->identifier = modalityInfo.value("identifier").toString();
+
+    ModalityMMRFile *modality = new ModalityMMRFile();
+    modality->type = modalityInfo.value("type").toString();
+
+    // file path
+    QString filePath = fileMetadata->basePath + QDir::separator() + modality->type + "_" + client->identifier + ".mmr";
+    filePath = QDir::cleanPath(filePath);
+    modality->filePath = filePath;
+
+    // recording list
+    QVariantList recordings = fileMetadata->getModalityRecordings(client->identifier);
+    modality->recordings = recordings;
+
+    // register
+    client->registerModality(modality);
 
     clientList.insert(client->identifier, client);
 
