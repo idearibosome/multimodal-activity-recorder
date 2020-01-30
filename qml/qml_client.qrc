@@ -6,5 +6,6 @@
         <file>client/ModalityQtSensorPage.qml</file>
         <file>client/ModalityBITalinoPage.qml</file>
         <file>client/ModalityFitbitPage.qml</file>
+        <file>client/ModalityMMRDataPage.qml</file>
     </qresource>
 </RCC>

@@ -18,6 +18,7 @@ Window {
     property var clientIdentifiers: []
 
     property var componentsOfModalityTypes: ({
+        "mmrdata": componentModalityMMRData,
         "kinect": componentModalityKinect,
         "qtsensor": componentModalityQtSensor,
         "bitalino": componentModalityBITalino,
@@ -72,6 +73,28 @@ Window {
         tabView.currentIndex = tabView.count - 1;
     }
     //---------------------------------------------------------------------------
+    function createMMRDataClient(modalityInfo) {
+        var identifier = qMain.createMMRDataClient(modalityInfo);
+        if (!identifier) return;
+
+        var text = "MMRData";
+
+        var tabObject = tabView.addTab(text);
+        tabObject.anchors.fill = Qt.binding(function() { return tabObject.parent; });
+
+        clientIdentifiers.push(identifier);
+
+        var modalityObject = componentsOfModalityTypes["mmrdata"].createObject(tabObject);
+        if (!modalityObject) return;
+
+        modalityObject.title = text;
+        modalityObject.identifier = identifier;
+
+        modalityObject.initialize();
+
+        tabView.currentIndex = tabView.count - 1;
+    }
+    //---------------------------------------------------------------------------
     function destroyClient(identifier) {
         var tabIndex = clientIdentifiers.indexOf(identifier) + 1;
         if (tabIndex <= 0) return;
@@ -98,6 +121,10 @@ Window {
     //---------------------------------------------------------------------------
     //---------------------------------------------------------------------------
 
+    Component {
+        id: componentModalityMMRData
+        ModalityMMRDataPage {}
+    }
     Component {
         id: componentModalityKinect
         ModalityKinectPage {}
@@ -243,6 +270,15 @@ Window {
                                         model = modelTextList;
                                     }
                                 }
+                                Button {
+                                    text: "Add"
+                                    enabled: container.isMMRDataLoaded
+
+                                    onClicked: {
+                                        if (fileModalityListComboBox.currentIndex < 0) return;
+                                        var modalityInfo = fileModalityListComboBox.modalities[fileModalityListComboBox.currentIndex];
+                                        container.createMMRDataClient(modalityInfo);
+                                    }
                                 }
                             }
                         }
