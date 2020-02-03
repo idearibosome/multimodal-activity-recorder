@@ -166,6 +166,9 @@ Window {
                         }
                         path = decodeURIComponent(path);
 
+                        var exportDialog = Qt.createComponent("ExportDialog.qml").createObject(container);
+                        exportDialog.show();
+
                         qMain.exportMMRData(path);
                     }
                 }

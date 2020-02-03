@@ -136,6 +136,8 @@ void QuickMain::doExportMMRData(QString exportPath) {
 
         QVariantList recordings = fileMetadata->getModalityRecordings(identifier);
 
+        IRQMSignalHandler::sendSignal("main", "exportLog", QString("[%1] %2, %3 recording(s)").arg(identifier).arg(modalityType).arg(recordings.count()));
+
         QString modalityPath = IRQMPathHelper::concatenate(exportPath, modalityType+"_"+identifier);
         QDir modalityPathDir(modalityPath);
         if (!modalityPathDir.exists()) {
@@ -147,7 +149,9 @@ void QuickMain::doExportMMRData(QString exportPath) {
         csvFile.open(QFile::WriteOnly);
 
         for (int i=0; i<recordings.count(); i++) {
-            qDebug() << identifier << i << recordings.count();
+            if (i % 100 == 99) {
+                IRQMSignalHandler::sendSignal("main", "exportLog", QString("[%1] exporting %2 of %3").arg(identifier).arg(i+1).arg(recordings.count()));
+            }
             QVariantMap recording = recordings.at(i).toMap();
 
             int recordingIdx = recording.value("recording_idx").toInt();
@@ -206,7 +210,10 @@ void QuickMain::doExportMMRData(QString exportPath) {
         }
 
         csvFile.close();
+        IRQMSignalHandler::sendSignal("main", "exportLog", QString("[%1] finished").arg(identifier));
     }
 
+    IRQMSignalHandler::sendSignal("main", "exportLog", QString("finished"));
+    IRQMSignalHandler::sendSignal("main", "exportFinished");
 }
 //---------------------------------------------------------------------------

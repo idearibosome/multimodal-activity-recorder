@@ -3,5 +3,6 @@
         <file>viewer/main.qml</file>
         <file>viewer/Modality.qml</file>
         <file>viewer/ImageViewer.qml</file>
+        <file>viewer/ExportDialog.qml</file>
     </qresource>
 </RCC>
