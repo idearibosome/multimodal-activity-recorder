@@ -1,6 +1,7 @@
 #ifndef QUICKMAIN_H
 #define QUICKMAIN_H
 
+#include <QtConcurrent>
 #include <QDateTime>
 #include <QMutex>
 #include <QMutexLocker>
@@ -50,6 +51,7 @@ public:
     Q_INVOKABLE qint64 getCurrentTimestamp();
 
     Q_INVOKABLE void exportMMRData(QString exportPath);
+    void doExportMMRData(QString exportPath);
 
 private:
     void createMMRObjects();

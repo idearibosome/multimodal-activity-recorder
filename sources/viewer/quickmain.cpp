@@ -124,6 +124,12 @@ qint64 QuickMain::getCurrentTimestamp() {
 void QuickMain::exportMMRData(QString exportPath) {
     if (!fileMetadata) return;
 
+    QtConcurrent::run(this, &QuickMain::doExportMMRData, exportPath);
+}
+//---------------------------------------------------------------------------
+void QuickMain::doExportMMRData(QString exportPath) {
+    if (!fileMetadata) return;
+
     for (auto object=objectList.begin(); object!=objectList.end(); ++object) {
         QString identifier = (*object)->identifier;
         QString modalityType = (*object)->modalityParser->type;
@@ -203,5 +209,4 @@ void QuickMain::exportMMRData(QString exportPath) {
     }
 
 }
-//---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
