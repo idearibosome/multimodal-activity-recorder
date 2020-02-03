@@ -287,6 +287,24 @@ void MMRFileMetadata::initializeTables() {
             "recordings_modality_index_timestamp ON recordings "
             "(modality_idx, timestamp)";
     sqlite3_exec(db, queryString.toUtf8().constData(), 0, 0, NULL);
+
+
+    // add basic db info
+    {
+        QString query = "INSERT INTO db_info (key, value) VALUES (?, ?)";
+        sqlite3_stmt *stmt = IRQMSQLiteHelper::prepare(db, query);
+        IRQMSQLiteHelper::bindValue(stmt, 1, QString("app_version"));
+        IRQMSQLiteHelper::bindValue(stmt, 2, QString(APP_VERSION_STRING));
+        sqlite3_step(stmt);
+        sqlite3_finalize(stmt);
+    }
+    {
+        QString query = "INSERT INTO db_info (key, value) VALUES (?, CURRENT_TIMESTAMP)";
+        sqlite3_stmt *stmt = IRQMSQLiteHelper::prepare(db, query);
+        IRQMSQLiteHelper::bindValue(stmt, 1, QString("created_date"));
+        sqlite3_step(stmt);
+        sqlite3_finalize(stmt);
+    }
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
