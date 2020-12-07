@@ -21,16 +21,16 @@ DEFINES += QT_DEPRECATED_WARNINGS
 TARGET = MMRecorderServer
 
 win32 {
-  VERSION = 0.6.0
+  VERSION = 0.7.0
 } else:macx {
-  VERSION = 0.6.0
+  VERSION = 0.7.0
 
   QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.10
   QMAKE_LFLAGS += -ObjC
 } else:android {
-  VERSION = 0.6.0
+  VERSION = 0.7.0
 } else:ios {
-  VERSION = 0.6.0
+  VERSION = 0.7.0
 
   CONFIG -= bitcode
 
