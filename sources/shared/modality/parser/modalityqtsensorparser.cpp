@@ -7,6 +7,8 @@ ModalityQtSensorParser::ModalityQtSensorParser(QObject *parent) : ModalityParser
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
 QVariantList ModalityQtSensorParser::parseData(QByteArray data, EModalityParserParseType parseType) {
+    Q_UNUSED(parseType);
+
     QVariantList parsedDataList;
 
     QDataStream inStream(&data, QIODevice::ReadOnly);

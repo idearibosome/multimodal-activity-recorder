@@ -40,6 +40,8 @@ void IRQMConfigurator::registerAllParams(QQmlApplicationEngine *engine) {
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 void IRQMConfigurator::registerModules(QQmlApplicationEngine *engine) {
+    Q_UNUSED(engine);
+
     // singletons
     IRQM_CONFIGURATOR_QML_REGISTER_SINGLETON(JSONHelper);
     IRQM_CONFIGURATOR_QML_REGISTER_SINGLETON(PathHelper);

@@ -16,6 +16,8 @@ QuickMainObjectImageProvider::QuickMainObjectImageProvider() : QQuickImageProvid
 }
 //---------------------------------------------------------------------------
 QImage QuickMainObjectImageProvider::requestImage(const QString &id, QSize *size, const QSize &requestedSize) {
+    Q_UNUSED(size);
+    Q_UNUSED(requestedSize);
 
     QStringList idParts = id.split("/");
     if (idParts.count() < 2) return QImage();

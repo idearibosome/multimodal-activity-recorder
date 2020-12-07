@@ -7,6 +7,8 @@ ModalityFitbitParser::ModalityFitbitParser(QObject *parent) : ModalityParser(par
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
 QVariantList ModalityFitbitParser::parseData(QByteArray data, EModalityParserParseType parseType) {
+    Q_UNUSED(parseType);
+
     QVariantList parsedDataList;
 
     QDataStream inStream(&data, QIODevice::ReadOnly);

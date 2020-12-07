@@ -7,6 +7,8 @@ ModalityBITalinoParser::ModalityBITalinoParser(QObject *parent) : ModalityParser
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
 QVariantList ModalityBITalinoParser::parseData(QByteArray data, EModalityParserParseType parseType) {
+    Q_UNUSED(parseType);
+
     QVariantList parsedDataList;
 
     QDataStream inStream(&data, QIODevice::ReadOnly);
